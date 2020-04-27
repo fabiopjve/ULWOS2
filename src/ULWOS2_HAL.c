@@ -2,7 +2,8 @@
 #include "ULWOS2_HAL.h"
 
 #if ULWOS2_TARGET == LINUX
-tULWOS2Timer getMilliseconds(void)
+// This is get milliseconds for Linux targets
+tULWOS2Timer ULWOS2_getMilliseconds(void)
 {
     struct timeval now;
     gettimeofday(&now,NULL);

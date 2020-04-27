@@ -3,10 +3,7 @@
 
 #include <stdint.h>
 #include <stddef.h>
-
-#ifndef ULWOS2_TARGET
-#define ULWOS2_TARGET LINUX
-#endif
+#include "ULWOS2_config.h"
 
 #if ULWOS2_TARGET == LINUX
 typedef uint64_t tULWOS2Timer;
@@ -14,6 +11,6 @@ typedef uint64_t tULWOS2Timer;
 typedef uint32_t tULWOS2Timer;
 #endif
 
-tULWOS2Timer getMilliseconds(void);
+tULWOS2Timer ULWOS2_getMilliseconds(void);
 
 #endif

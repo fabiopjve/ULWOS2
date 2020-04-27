@@ -13,6 +13,7 @@ embeddedsystems.io
 #define __ULWOS2_H
 
 #include <stdint.h>
+#include <stdbool.h>
 #include "ULWOS2_HAL.h"
 
 #ifndef ULWOS2_MAX_THREADS
@@ -27,8 +28,9 @@ embeddedsystems.io
 #define GLUE1(x, y) x ## y
 #define GLUE2(x, y) GLUE1(x, y)
 #define ULWOS2_THREAD_START() static void *jumper = NULL; if (jumper!=NULL) goto *jumper;
-#define ULWOS2_THREAD_YIELD(state) ({jumper = &&state; return;})
-#define ULWOS2_THREAD_SLEEP_MS(time) ({ULWOS2_setTimer(time); jumper= &&GLUE2(LB,__LINE__); return; GLUE2(LB,__LINE__): while(0);})
+#define ULWOS2_THREAD_YIELD() ({jumper= &&GLUE2(LB,__LINE__); return; GLUE2(LB,__LINE__): while(0);})
+#define ULWOS2_THREAD_YIELD_STATE(state) ({jumper = &&state; return;})
+#define ULWOS2_THREAD_SLEEP_MS(interval) ({ULWOS2_setThreadTimerMs(interval); jumper= &&GLUE2(LB,__LINE__); return; GLUE2(LB,__LINE__): while(0);})
 #define ULWOS2_THREAD_RESET() ({jumper = NULL; return;})
 
 typedef enum {
@@ -51,7 +53,7 @@ typedef struct {
   tULWOS2Timer timer;
 } tULWOS2threadControlBlock;
 
-void ULWOS2_setTimer(tULWOS2Timer time);
+void ULWOS2_setThreadTimerMs(tULWOS2Timer time);
 void ULWOS2_init();
 tULWOS2threadHandler ULWOS2_createThread(void* thisFunction, tULWOS2threadPriority thisPriority);
 void ULWOS2_startScheduler();
