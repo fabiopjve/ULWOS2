@@ -2,9 +2,8 @@ CC       = gcc
 OBJ      = main.o ULWOS2.o ULWOS2_HAL.o
 LINKOBJ  = main.o ULWOS2.o ULWOS2_HAL.o
 BIN      = main
-CXXFLAGS = $(CXXINCS) -g3
-CFLAGS   = $(INCS) -g3
-RM       = rm.exe -f
+CFLAGS   = -g3
+RM       = rm -f
 
 .PHONY: all all-before all-after clean clean-custom
 
