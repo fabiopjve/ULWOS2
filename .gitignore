@@ -1,0 +1,8 @@
+/bin
+/obj
+*.o
+*.exe
+*.temp
+*.layout
+*.depend
+*.win
