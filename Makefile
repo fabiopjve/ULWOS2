@@ -5,9 +5,9 @@ BIN      = main
 CFLAGS   = -g3
 RM       = rm -f
 
-.PHONY: all all-before all-after clean clean-custom
+.PHONY: all clean clean-custom
 
-all: all-before $(BIN) all-after
+all: makedir $(BIN) 
 
 clean: clean-custom
 	${RM} $(LINKOBJ) $(BIN)
@@ -23,3 +23,6 @@ ULWOS2.o: src/ULWOS2.c
 
 ULWOS2_HAL.o: src/ULWOS2_HAL.c
 	$(CC) -c src/ULWOS2_HAL.c -o obj/ULWOS2_HAL.o $(CFLAGS)
+
+makedir:
+	mkdir -p obj
