@@ -46,16 +46,17 @@ typedef uint8_t tULWOS2threadHandler;
 typedef uint8_t tULWOS2threadPriority;
 
 typedef struct {
-  void * address;
+  void (*address)();
   tULWOS2threadPriority priority;
   eULWOS2threadState state;
   tULWOS2threadHandler nextThread;
-  tULWOS2Timer timer;
+  tULWOS2Timer timerStart;
+  tULWOS2Timer timerInterval;
 } tULWOS2threadControlBlock;
 
-void ULWOS2_setThreadTimerMs(tULWOS2Timer time);
+void ULWOS2_setThreadTimerMs(tULWOS2Timer interval);
 void ULWOS2_init();
-tULWOS2threadHandler ULWOS2_createThread(void* thisFunction, tULWOS2threadPriority thisPriority);
+tULWOS2threadHandler ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);
 void ULWOS2_startScheduler();
 
 #endif

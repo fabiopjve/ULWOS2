@@ -74,9 +74,10 @@ static void ULWOS2_orderPriority(eULWOS2threadState state)
  */
 void ULWOS2_setThreadTimerMs(tULWOS2Timer interval)
 {
-    ULWOS2_threads[currentQueueHead].timer = ULWOS2_getMilliseconds() + interval;
+    ULWOS2_threads[currentQueueHead].timerStart = ULWOS2_getMilliseconds();
+    ULWOS2_threads[currentQueueHead].timerInterval = interval;
     ULWOS2_threads[currentQueueHead].state = THREAD_WAITING_FOR_TIMER;
-    invalidateThreadPriorityQueue = true;
+    invalidateThreadPriorityQueue = true;   // force a new sorting of the priority queue
 }
 
 /*
@@ -90,7 +91,7 @@ void static ULWOS2_checkTimers(void)
     while (thisThread<totalThreads) {
         if (ULWOS2_threads[thisThread].state == THREAD_WAITING_FOR_TIMER) {
             // check if enough time have elapsed
-            if (now >= ULWOS2_threads[thisThread].timer) {
+            if ((now-ULWOS2_threads[thisThread].timerStart) >= ULWOS2_threads[thisThread].timerInterval) {
                 // ok enough time have elapsed, this thread is ready to run again
                 ULWOS2_threads[thisThread].state = THREAD_READY;
                 invalidateThreadPriorityQueue = true;
@@ -104,7 +105,7 @@ void static ULWOS2_checkTimers(void)
  * ULWOS2_init
  * Initializes all threads and ULWOS2 states
  */
-void inline ULWOS2_init()
+void ULWOS2_init()
 {
     tULWOS2threadHandler thisThread = 0;
     while (thisThread<ULWOS2_MAX_THREADS) {
@@ -112,7 +113,8 @@ void inline ULWOS2_init()
         ULWOS2_threads[thisThread].priority = ULWOS2_PRIO_MIN;
         ULWOS2_threads[thisThread].state = THREAD_NOT_READY;
         ULWOS2_threads[thisThread].nextThread = ULWOS2_INVALID_HANDLER;
-        ULWOS2_threads[thisThread].timer = 0;
+        ULWOS2_threads[thisThread].timerStart = 0;
+        ULWOS2_threads[thisThread].timerInterval = 0;
         thisThread++;
     }
     invalidateThreadPriorityQueue = true;
@@ -123,16 +125,16 @@ void inline ULWOS2_init()
 /*
  * ULWOS2_createThread
  * Creates a new thread. It expects two parameters:
- *  thisFunction - the function to run
- *  thisPriority - the desired priority for this thread (0 is the highest)
+ *  newThread - the function to run
+ *  newPriority - the desired priority for this thread (0 is the highest)
  * Returns: tULWOS2threadHandler, a handler to this thread
  */
-tULWOS2threadHandler ULWOS2_createThread(void* thisFunction, tULWOS2threadPriority thisPriority)
+tULWOS2threadHandler ULWOS2_createThread(void(*newThread)(), tULWOS2threadPriority newPriority)
 {
     tULWOS2threadHandler thisThread = totalThreads;
     if (thisThread < ULWOS2_MAX_THREADS) {
-        ULWOS2_threads[thisThread].address = thisFunction;
-        ULWOS2_threads[thisThread].priority = thisPriority;
+        ULWOS2_threads[thisThread].address = newThread;
+        ULWOS2_threads[thisThread].priority = newPriority;
         ULWOS2_threads[thisThread].state = THREAD_READY;
         totalThreads++;
         invalidateThreadPriorityQueue = true;
@@ -144,7 +146,7 @@ tULWOS2threadHandler ULWOS2_createThread(void* thisFunction, tULWOS2threadPriori
  * ULWOS2_startScheduler
  * Starts ULWOS2 scheduler, this function should not return!
  */
-void inline ULWOS2_startScheduler()
+void ULWOS2_startScheduler()
 {
     static tULWOS2threadHandler queueHead;
     tULWOS2threadPriority currentPriority = ULWOS2_PRIO_MIN;

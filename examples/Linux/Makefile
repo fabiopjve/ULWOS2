@@ -18,11 +18,11 @@ $(BIN): $(OBJ)
 main.o: main.c
 	$(CC) -c main.c -o obj/main.o $(CFLAGS)
 
-ULWOS2.o: src/ULWOS2.c
-	$(CC) -c src/ULWOS2.c -o obj/ULWOS2.o $(CFLAGS)
+ULWOS2.o: ../../src/ULWOS2.c
+	$(CC) -c ../../src/ULWOS2.c -o obj/ULWOS2.o $(CFLAGS)
 
-ULWOS2_HAL.o: src/ULWOS2_HAL.c
-	$(CC) -c src/ULWOS2_HAL.c -o obj/ULWOS2_HAL.o $(CFLAGS)
+ULWOS2_HAL.o: ../../src/ULWOS2_HAL.c
+	$(CC) -c ../../src/ULWOS2_HAL.c -o obj/ULWOS2_HAL.o $(CFLAGS)
 
 makedir:
 	mkdir -p obj

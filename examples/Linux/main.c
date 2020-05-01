@@ -7,7 +7,7 @@ embeddedsystems.io
 
 *******************************************************************************/
 #include <stdio.h>
-#include "src/ULWOS2.h"
+#include "../../src/ULWOS2.h"
 
 void testThread1(void)
 {
