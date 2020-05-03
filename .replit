@@ -1,2 +1,2 @@
 language = "c"
-run = "make; ./main"
+run = "cd examples/Linux; make; ./ULWOS2_demo1"
