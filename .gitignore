@@ -1,5 +1,8 @@
-/bin
-/obj
+# Ignore all files
+*
+# Unignore all files with extensions
+!*.*
+# Now ignore files with specific extentions
 *.o
 *.exe
 *.temp
@@ -7,4 +10,3 @@
 *.depend
 *.win
 *.bin
-*.
