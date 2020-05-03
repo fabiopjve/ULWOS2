@@ -6,7 +6,8 @@
  * A third thread is used for servicing ParticleOS
  * 
  * Author:  Fábio Pereira
- * Date:    Dec, 21, 2017
+ * Date:    Apr, 26, 2020
+ * embeddedsystems.io
  **/
 #include "Particle.h"
 #include "ULWOS2.h"
