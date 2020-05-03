@@ -12,7 +12,7 @@ embeddedsystems.io
 void testThread1(void)
 {
     static uint8_t counter = 5;
-    ULWOS2_THREAD_START()
+    ULWOS2_THREAD_START();
     while (1) {
         printf(".");
         fflush(stdout);
@@ -36,7 +36,7 @@ void testThread1(void)
 
 void testThread2(void)
 {
-    ULWOS2_THREAD_START()
+    ULWOS2_THREAD_START();
     while (1) {
         printf("!");
         fflush(stdout);
@@ -55,7 +55,7 @@ void testThread2(void)
 
 int main()
 {
-    printf("ULWOS2 demo2!\n");
+    printf("ULWOS2 demo!\n");
     ULWOS2_init();
     ULWOS2_createThread(testThread1, 1);
     ULWOS2_createThread(testThread2, 2);

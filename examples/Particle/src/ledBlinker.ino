@@ -16,7 +16,7 @@
 
 void ledBlinkThread1(void)
 {
-	ULWOS2_THREAD_START()
+	ULWOS2_THREAD_START();
 	while (1) {
 		digitalWrite(LED1, HIGH);		// LED on
 		ULWOS2_THREAD_SLEEP_MS(250);	// wait 250ms
@@ -27,7 +27,7 @@ void ledBlinkThread1(void)
 
 void ledBlinkThread2(void)
 {
-	ULWOS2_THREAD_START()
+	ULWOS2_THREAD_START();
 	while (1) {
 		digitalWrite(LED2, HIGH);		// LED on
 		ULWOS2_THREAD_SLEEP_MS(250);	// wait 250ms
@@ -38,7 +38,7 @@ void ledBlinkThread2(void)
 
 void threadKeepAlive(void)
 {
-	ULWOS2_THREAD_START()
+	ULWOS2_THREAD_START();
 	while (1) {
 		Particle.process();
 		ULWOS2_THREAD_SLEEP_MS(100);	// wait 100ms 	
