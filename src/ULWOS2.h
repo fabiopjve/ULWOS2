@@ -63,6 +63,18 @@ embeddedsystems.io
  * ULWOS2_THREAD_KILL() - kills this thread, it will not run again
  */
 #define ULWOS2_THREAD_KILL() ({ULWOS2_killThread(); return;})
+/*
+ * ULWOS2_THREAD_CREATE(func,prio) - creates a new thread using the given function and priority
+ */
+#define ULWOS2_THREAD_CREATE(func,prio) ULWOS2_createThread(func,prio)
+/*
+ * ULWOS2_INIT() - initializes ULWOS2
+ */
+#define ULWOS2_INIT() ULWOS2_init()
+/*
+ * ULWOS2_START_SCHEDULER() - starts ULWOS2 scheduler (this function does not return)
+ */
+#define ULWOS2_START_SCHEDULER() ULWOS2_startScheduler()
 
 typedef enum {
     THREAD_NOT_READY,

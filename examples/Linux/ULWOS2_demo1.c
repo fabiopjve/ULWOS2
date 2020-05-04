@@ -88,10 +88,10 @@ void testThread4(void)
 int main()
 {
     printf("ULWOS2 demo!\n");
-    ULWOS2_init();
-    ULWOS2_createThread(testThread1, 1);
-    ULWOS2_createThread(testThread2, 2);
-    ULWOS2_createThread(testThread3, 20);
-    ULWOS2_createThread(testThread4, 20);
-    ULWOS2_startScheduler();
+    ULWOS2_INIT();
+    ULWOS2_THREAD_CREATE(testThread1, 1);
+    ULWOS2_THREAD_CREATE(testThread2, 2);
+    ULWOS2_THREAD_CREATE(testThread3, 20);
+    ULWOS2_THREAD_CREATE(testThread4, 20);
+    ULWOS2_START_SCHEDULER();
 }

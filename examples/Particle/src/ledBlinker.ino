@@ -54,9 +54,9 @@ void setup()
 
 void loop() 
 {
-  ULWOS2_init();
-  ULWOS2_createThread(ledBlinkThread1, 2);
-  ULWOS2_createThread(ledBlinkThread2, 2);
-  ULWOS2_createThread(threadKeepAlive, 1);
-  ULWOS2_startScheduler();  
+  ULWOS2_INIT();
+  ULWOS2_THREAD_CREATE(ledBlinkThread1, 2);
+  ULWOS2_THREAD_CREATE(ledBlinkThread2, 2);
+  ULWOS2_THREAD_CREATE(threadKeepAlive, 1);
+  ULWOS2_START_SCHEDULER();  
 }
