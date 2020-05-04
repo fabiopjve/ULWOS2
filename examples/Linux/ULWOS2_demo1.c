@@ -9,6 +9,9 @@ embeddedsystems.io
 #include <stdio.h>
 #include "../../src/ULWOS2.h"
 
+#define SIGNAL_RUN_THREAD3  1
+#define SIGNAL_RUN_THREAD4  2
+
 void testThread1(void)
 {
     static uint8_t counter = 5;
@@ -30,6 +33,7 @@ void testThread1(void)
         if (counter == 0) {
             counter = 5;
             ULWOS2_THREAD_SLEEP_MS(3000);
+            ULWOS2_THREAD_SEND_SIGNAL(SIGNAL_RUN_THREAD3);
         }
     }
 }
@@ -53,11 +57,34 @@ void testThread2(void)
     }
 }
 
+void testThread3(void)
+{
+    ULWOS2_THREAD_START();
+    while(1) {
+        printf("T3 WAIT 1 ");
+        fflush(stdout);
+        ULWOS2_THREAD_WAIT_FOR_SIGNAL(SIGNAL_RUN_THREAD3);
+        ULWOS2_THREAD_SEND_SIGNAL(SIGNAL_RUN_THREAD4);
+    }
+}
+
+void testThread4(void)
+{
+    ULWOS2_THREAD_START();
+    while(1) {
+        printf("T4 WAIT 3 ");
+        fflush(stdout);
+        ULWOS2_THREAD_WAIT_FOR_SIGNAL(SIGNAL_RUN_THREAD4);
+    }
+}
+
 int main()
 {
     printf("ULWOS2 demo!\n");
     ULWOS2_init();
     ULWOS2_createThread(testThread1, 1);
     ULWOS2_createThread(testThread2, 2);
+    ULWOS2_createThread(testThread3, 20);
+    ULWOS2_createThread(testThread4, 20);
     ULWOS2_startScheduler();
 }

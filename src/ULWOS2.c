@@ -1,6 +1,6 @@
 /******************************************************************************
 
-ULWOS2 - Ultra lightweight Operating System 2
+ULWOS2 - Ultra LightWeight Operating System 2
 This is a very simple thread scheduler completely written in C
 
 Author: Fábio Pereira
@@ -102,6 +102,34 @@ void static ULWOS2_checkTimers(void)
 }
 
 /*
+ * ULWOS2_waitForSignal
+ * Force the thread into sleep waiting for the specified signal
+ * The thread will resume operation once the signal arrives
+ */
+void ULWOS2_waitForSignal(tULWOS2threadSignal signal)
+{
+    ULWOS2_threads[currentQueueHead].signal = signal;
+    ULWOS2_threads[currentQueueHead].state = THREAD_WAITING_FOR_SIGNAL;
+    invalidateThreadPriorityQueue = true;   // force a new sorting of the priority queue   
+}
+
+/*
+ * ULWOS2_sendSignal
+ * Send the specified signal, this will resume all threads that are waiting for it
+ */
+void ULWOS2_sendSignal(tULWOS2threadSignal signal)
+{
+    tULWOS2threadHandler thisThread = 0;
+    while (thisThread<totalThreads) {
+        if (ULWOS2_threads[thisThread].state == THREAD_WAITING_FOR_SIGNAL && ULWOS2_threads[thisThread].signal == signal) {
+            ULWOS2_threads[thisThread].state = THREAD_READY;
+            invalidateThreadPriorityQueue = true;
+        }
+        thisThread++;
+    }
+}
+
+/*
  * ULWOS2_init
  * Initializes all threads and ULWOS2 states
  */
@@ -148,7 +176,7 @@ tULWOS2threadHandler ULWOS2_createThread(void(*newThread)(), tULWOS2threadPriori
  */
 void ULWOS2_startScheduler()
 {
-    static tULWOS2threadHandler queueHead;
+    tULWOS2threadHandler queueHead;
     tULWOS2threadPriority currentPriority = ULWOS2_PRIO_MIN;
     void (*threadToRun)(void);
     while(1) {
@@ -158,6 +186,7 @@ void ULWOS2_startScheduler()
             if (currentQueueHead != ULWOS2_INVALID_HANDLER) currentPriority = ULWOS2_threads[currentQueueHead].priority;
             else currentPriority = ULWOS2_PRIO_MIN;
         } else currentQueueHead = queueHead;
+        // Runs all threads in READY state
         while (currentQueueHead != ULWOS2_INVALID_HANDLER && ULWOS2_threads[currentQueueHead].priority <= currentPriority) {
             threadToRun = ULWOS2_threads[currentQueueHead].address;
             if (threadToRun != NULL) threadToRun();
