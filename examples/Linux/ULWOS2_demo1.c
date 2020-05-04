@@ -70,11 +70,18 @@ void testThread3(void)
 
 void testThread4(void)
 {
+    static uint8_t counter = 5;
     ULWOS2_THREAD_START();
     while(1) {
         printf("T4 WAIT 3 ");
         fflush(stdout);
         ULWOS2_THREAD_WAIT_FOR_SIGNAL(SIGNAL_RUN_THREAD4);
+        counter--;
+        if (counter == 0) {
+            printf("T4 BYE ");
+            fflush(stdout);
+            ULWOS2_THREAD_KILL();
+        }
     }
 }
 
