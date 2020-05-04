@@ -66,7 +66,6 @@ embeddedsystems.io
 
 typedef enum {
     THREAD_NOT_READY,
-    THREAD_BLOCKED,
     THREAD_SLEEPING,
     THREAD_WAITING_FOR_SIGNAL,
     THREAD_WAITING_FOR_TIMER,
