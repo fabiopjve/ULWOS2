@@ -25,8 +25,9 @@ embeddedsystems.io
 
 #define ULWOS2_INVALID_HANDLER 255
 
-#define GLUE1(x, y) x ## y
-#define GLUE2(x, y) GLUE1(x, y)
+#define GLUE(x, y) x ## y
+#define GLUE2(x,y) GLUE(x, y)
+#define GLUE3(x, y, z) GLUE2(GLUE2(x, y), z)
 /*
  * ULWOS2_THREAD_START() - this is the initial constructor for any thread. It is responsible for
  * changing code flow upon resuming a thread
@@ -37,7 +38,7 @@ embeddedsystems.io
  * change thread state, so if there are other threads ready to run with a priority higher or
  * equal to the current level (of this thread), they are gonna have a chance to run
  */
-#define ULWOS2_THREAD_YIELD() ({jumper= &&GLUE2(LB,__LINE__); return; GLUE2(LB,__LINE__): while(0);})
+#define ULWOS2_THREAD_YIELD() ({jumper= &&GLUE3(LB,__FUNCTION__,__LINE__); return; GLUE3(LB,__FUNCTION__,__LINE__): while(0);})
 /*
  * ULWOS2_THREAD_SLEEP_MS(interval) - causes the thread to suspend for the given time interval in
  * milliseconds. Running this command yields control back to the scheduler.
