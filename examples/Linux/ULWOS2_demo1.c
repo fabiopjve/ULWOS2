@@ -120,9 +120,9 @@ int main()
     asciiCursorXY(0,1);
     printf("ULWOS2 demo!\n");
     ULWOS2_INIT();
-    ULWOS2_THREAD_CREATE(testThread1, 1);
-    ULWOS2_THREAD_CREATE(testThread2, 2);
-    ULWOS2_THREAD_CREATE(testThread3, 3);
-    ULWOS2_THREAD_CREATE(testThread4, 4);    
+    ULWOS2_THREAD_CREATE(testThread1, 10);
+    ULWOS2_THREAD_CREATE(testThread2, 10);
+    ULWOS2_THREAD_CREATE(testThread3, 1);
+    ULWOS2_THREAD_CREATE(testThread4, 2);    
     ULWOS2_START_SCHEDULER();
 }
