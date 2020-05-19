@@ -3,6 +3,9 @@
 # Unignore all files with extensions
 !*.*
 # Now ignore files with specific extentions
+!examples/Linux
+!examples/Particle
+!src
 *.o
 *.exe
 *.temp
