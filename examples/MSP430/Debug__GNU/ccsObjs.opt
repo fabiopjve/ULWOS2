@@ -1,0 +1,1 @@
+"./blink.o" "./ULWOS2/src/ULWOS2.o" "./ULWOS2/src/ULWOS2_HAL.o" -T"../msp430f2013.ld" -Wl,--start-group -lgcc -lc -Wl,--end-group 

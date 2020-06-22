@@ -9,6 +9,8 @@
 	typedef uint64_t tULWOS2Timer;
 #elif ULWOS2_TARGET == ULWOS2_TARGET_PARTICLE
 	typedef uint32_t tULWOS2Timer;
+#elif ULWOS2_TARGET == ULWOS2_TARGET_MSP430
+	typedef uint16_t tULWOS2Timer;
 #else
 	
 #endif
