@@ -91,11 +91,11 @@ typedef uint8_t tULWOS2threadSignal;
 
 typedef struct {
   void (*address)();                  // thread entry point
+  tULWOS2Timer timerStart;            // milliseconds when timer was set
+  tULWOS2Timer timerInterval;         // desired timer interval in ms
   tULWOS2threadPriority priority;     // priority
   eULWOS2threadState state;           // current state
   tULWOS2threadHandler nextThread;    // handler of the next thread
-  tULWOS2Timer timerStart;            // milliseconds when timer was set
-  tULWOS2Timer timerInterval;         // desired timer interval in ms
   tULWOS2threadSignal signal;         // the signal this thread is waiting for
 } tULWOS2threadControlBlock;
 
