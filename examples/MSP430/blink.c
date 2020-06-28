@@ -17,7 +17,7 @@ tULWOS2Timer ULWOS2_getMilliseconds(void)
 	return milliSeconds;
 }
 
-void __attribute__ ((interrupt(TIMERA0_VECTOR))) Timer_A_CC0 (void)
+void __attribute__ ((interrupt(TIMERA0_VECTOR))) Timer_A_Ch0 (void)
 {
   CCR0 += 1000;		// Add 1ms offset to CCR0
   milliSeconds++;
@@ -35,7 +35,7 @@ void systemInit(void)
 	P1DIR = 0x01;
 	// configure Timer A as a free running timer (1us per increment)
 	TACTL = TASSEL_2 | ID_3 | MC_2;
-	// configure
+	// configure Timer A channel 0 to compare mode
 	CCR0 = 999;
 	CCTL0 = CCIE;					// CCR0 interrupt enabled
 	 __bis_SR_register(GIE);        // enable interrupts
