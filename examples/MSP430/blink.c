@@ -3,7 +3,7 @@
 
 /******************************************************************************
 
-ULWOS2 example with two threads on the MSP430F2013
+ULWOS2 example with a single thread on the MSP430F2013
 Author: Fábio Pereira
 Date: Jun, 20, 2020
 embeddedsystems.io
@@ -19,16 +19,16 @@ tULWOS2Timer ULWOS2_getMilliseconds(void)
 
 void __attribute__ ((interrupt(TIMERA0_VECTOR))) Timer_A_Ch0 (void)
 {
-  CCR0 += 1000;		// Add 1ms offset to CCR0
-  milliSeconds++;
+	CCR0 += 1000;		// Add 1ms offset to CCR0
+	milliSeconds++;
 }
 
 void systemInit(void)
 {
 	WDTCTL = WDTPW | WDTHOLD;		// stop watchdog timer
 	// configure the DCO to operate at 16MHz
-    DCOCTL = CALDCO_16MHZ;
-    BCSCTL1 = CALBC1_16MHZ;
+	DCOCTL = CALDCO_16MHZ;
+	BCSCTL1 = CALBC1_16MHZ;
 	// set SMCLK to 8MHz
 	BCSCTL2 = DIVS_1;
 	// configure P1.0 as output
@@ -38,7 +38,7 @@ void systemInit(void)
 	// configure Timer A channel 0 to compare mode
 	CCR0 = 999;
 	CCTL0 = CCIE;					// CCR0 interrupt enabled
-	 __bis_SR_register(GIE);        // enable interrupts
+	__bis_SR_register(GIE);        // enable interrupts
 }
 
 void thread1(void)
