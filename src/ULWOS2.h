@@ -83,7 +83,7 @@ typedef enum {
     THREAD_WAITING_FOR_SIGNAL,
     THREAD_WAITING_FOR_TIMER,
     THREAD_READY
-} eULWOS2threadState;
+} __attribute__ ((__packed__)) eULWOS2threadState;
 
 typedef uint8_t tULWOS2threadHandler;
 typedef uint8_t tULWOS2threadPriority;
@@ -105,6 +105,6 @@ void ULWOS2_waitForSignal(tULWOS2threadSignal signal);
 void ULWOS2_killThread(void);
 void ULWOS2_init();
 tULWOS2threadHandler ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);
-void ULWOS2_startScheduler();
+void ULWOS2_startScheduler() __attribute__ ((noreturn));
 
 #endif

@@ -54,7 +54,7 @@ void thread1(void)
 void main(void)
 {
 	systemInit();
-    ULWOS2_INIT();
-    ULWOS2_THREAD_CREATE(thread1, 10);
-    ULWOS2_START_SCHEDULER();	
+	ULWOS2_INIT();
+	ULWOS2_THREAD_CREATE(thread1, 10);
+	ULWOS2_START_SCHEDULER();	
 }

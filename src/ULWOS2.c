@@ -13,8 +13,8 @@ embeddedsystems.io
 
 static tULWOS2threadControlBlock ULWOS2_threads[ULWOS2_MAX_THREADS];
 static tULWOS2threadHandler currentQueueHead;
-static uint16_t totalThreads;
-static uint16_t lastThreadIndex;
+static tULWOS2threadHandler totalThreads;
+static tULWOS2threadHandler lastThreadIndex;
 static bool invalidateThreadPriorityQueue;
 
 /*
@@ -195,7 +195,7 @@ tULWOS2threadHandler ULWOS2_createThread(void(*newThread)(), tULWOS2threadPriori
  * ULWOS2_startScheduler
  * Starts ULWOS2 scheduler, this function should not return!
  */
-void ULWOS2_startScheduler()
+void __attribute__ ((naked)) ULWOS2_startScheduler()
 {
     tULWOS2threadHandler queueHead;
     tULWOS2threadPriority currentPriority = ULWOS2_PRIO_MIN;
