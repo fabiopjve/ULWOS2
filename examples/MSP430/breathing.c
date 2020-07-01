@@ -53,20 +53,20 @@ void softPWMthread(void)
 {
     static int16_t internalDutyCycle;
     int16_t sleepTime;
-	ULWOS2_THREAD_START();
-	while(1)
-	{
-	    internalDutyCycle = dutyCycle;
-	    sleepTime = (internalDutyCycle * period) / 100;
-		P1OUT |= 0x01;				// turn LED on
-		ULWOS2_THREAD_SLEEP_MS(sleepTime);
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        internalDutyCycle = dutyCycle;
+        sleepTime = (internalDutyCycle * period) / 100;
+        P1OUT |= 0x01;				// turn LED on
+        ULWOS2_THREAD_SLEEP_MS(sleepTime);
         sleepTime = ((100 - internalDutyCycle) * period) / 100;
         P1OUT &= ~0x01;              // turn LED off
         ULWOS2_THREAD_SLEEP_MS(sleepTime);
-	}
+    }
 }
 
-// LED bightness control (breathing)
+// LED brightness control (breathing)
 void breathThread(void)
 {
     static bool direction = 0;
@@ -74,12 +74,12 @@ void breathThread(void)
     while(1)
     {
         if (!direction) dutyCycle++; else dutyCycle--;
-        if (dutyCycle == 100 || dutyCycle == 0) {
+        if (dutyCycle == 100 || dutyCycle == 0) 
+        {
             direction = !direction;
             // wait 250ms before starting another cycle
             if (!direction) ULWOS2_THREAD_SLEEP_MS(250);
         } else ULWOS2_THREAD_SLEEP_MS(10); // update PWM every 10ms
-
     }
 }
 
@@ -105,13 +105,61 @@ void blink2(void)
     }
 }
 
+// Blink an LED connected to pin P1.3 at 4 Hz
+void blink3(void)
+{
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        P1OUT ^= 0x08;  // complement state of pin P1.3
+        ULWOS2_THREAD_SLEEP_MS(125);
+    }
+}
+
+// Blink an LED connected to pin P1.4 at ~8 Hz
+void blink4(void)
+{
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        P1OUT ^= 0x10;  // complement state of pin P1.4
+        ULWOS2_THREAD_SLEEP_MS(62);
+    }
+}
+
+// Blink an LED connected to pin P1.5 at ~16 Hz
+void blink5(void)
+{
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        P1OUT ^= 0x20;  // complement state of pin P1.5
+        ULWOS2_THREAD_SLEEP_MS(31);
+    }
+}
+
+// Blink an LED connected to pin P1.6 at ~32 Hz
+void blink6(void)
+{
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        P1OUT ^= 0x40;  // complement state of pin P1.6
+        ULWOS2_THREAD_SLEEP_MS(15);
+    }
+}
+
 void main(void)
 {
     systemInit();
     ULWOS2_INIT();
     ULWOS2_THREAD_CREATE(softPWMthread, 0);
     ULWOS2_THREAD_CREATE(breathThread, 1);
-    ULWOS2_THREAD_CREATE(blink1, 1);
-    ULWOS2_THREAD_CREATE(blink2, 1);
+    ULWOS2_THREAD_CREATE(blink1, 2);
+    ULWOS2_THREAD_CREATE(blink2, 2);
+    ULWOS2_THREAD_CREATE(blink3, 2);
+    ULWOS2_THREAD_CREATE(blink4, 2);
+    ULWOS2_THREAD_CREATE(blink5, 2);
+    ULWOS2_THREAD_CREATE(blink6, 2);   
     ULWOS2_START_SCHEDULER();	
 }
