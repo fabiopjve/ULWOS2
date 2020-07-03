@@ -14,7 +14,7 @@ static int16_t milliSeconds;
 
 tULWOS2Timer ULWOS2_getMilliseconds(void)
 {
-	return milliSeconds;
+	return milliSeconds;    // no need for critical section here!
 }
 
 void __attribute__ ((interrupt(TIMERA0_VECTOR))) Timer_A_Ch0 (void)
