@@ -17,7 +17,7 @@ embeddedsystems.io
 #include "ULWOS2_HAL.h"
 
 #ifndef ULWOS2_MAX_THREADS
-#define ULWOS2_MAX_THREADS 32
+#define ULWOS2_MAX_THREADS 8
 #endif
 
 #define ULWOS2_PRIO_MAX 0

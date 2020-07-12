@@ -17,6 +17,7 @@ static tULWOS2threadHandler totalThreads;
 static tULWOS2threadHandler lastThreadIndex;
 static bool invalidateThreadPriorityQueue;
 
+
 /*
  * ULWOS2_updateQueueOrder
  * Update queue ordering for the given thread
@@ -85,7 +86,7 @@ void ULWOS2_setThreadTimerMs(tULWOS2Timer interval)
  * ULWOS2_checkTimers
  * Check all thread timers and resume the threads with expired timers
  */
-void static ULWOS2_checkTimers(void)
+static void ULWOS2_checkTimers(void)
 {
     tULWOS2threadHandler thisThread = 0;
     tULWOS2Timer now = ULWOS2_getMilliseconds();
