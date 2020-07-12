@@ -6,7 +6,7 @@ ULWOS2 is different because it doesn't store a full context for each task, this 
 * ULWOS2_THREAD_CREATE - creates a new ULWOS2 thread
 * ULWOS2_THREAD_KILL - kills (destroys) current thread
 * ULWOS2_START_SCHEDULER - starts ULWOS2 scheduler (this function does not return)
-* ULWOS2_THREAD_START - this is the constructor that enables jumping to a specific point within the thread when resuming;
+* ULWOS2_THREAD_START - this is the entity that enables jumping to a specific point within the thread when resuming;
 * ULWOS2_THREAD_YIELD - yields back to the scheduler. This is used for giving  a chance of other threads to run (it doesn't block the thread);
 * ULWOS2_THREAD_SLEEP_MS - blocks the thread for a specific amount of milliseconds;
 * ULWOS2_THREAD_SEND_SIGNAL - sends a signal to other threads;
