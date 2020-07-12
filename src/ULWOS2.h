@@ -99,6 +99,17 @@ typedef struct {
   tULWOS2threadSignal signal;         // the signal this thread is waiting for
 } tULWOS2threadControlBlock;
 
+#ifdef __cplusplus
+// This is needed for Arduino
+extern "C" {void ULWOS2_setThreadTimerMs(tULWOS2Timer interval);}
+extern "C" {void ULWOS2_sendSignal(tULWOS2threadSignal signal);}
+extern "C" {void ULWOS2_waitForSignal(tULWOS2threadSignal signal);}
+extern "C" {void ULWOS2_killThread(void);}
+extern "C" {void ULWOS2_init();}
+extern "C" {tULWOS2threadHandler ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);}
+extern "C" {void ULWOS2_startScheduler() __attribute__ ((noreturn));}
+#else
+// Standard C building environmet
 void ULWOS2_setThreadTimerMs(tULWOS2Timer interval);
 void ULWOS2_sendSignal(tULWOS2threadSignal signal);
 void ULWOS2_waitForSignal(tULWOS2threadSignal signal);
@@ -106,5 +117,6 @@ void ULWOS2_killThread(void);
 void ULWOS2_init();
 tULWOS2threadHandler ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);
 void ULWOS2_startScheduler() __attribute__ ((noreturn));
+#endif	/* __cplusplus */
 
 #endif
