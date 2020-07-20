@@ -123,7 +123,7 @@ extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
 
 #ifdef __cplusplus
     // This is needed for Arduino
-    extern "C" {void ULWOS2_setThreadTimerMs(tULWOS2Timer interval);}
+    extern "C" {void ULWOS2_setThreadTimerMs(uint16_t interval);}
     extern "C" {void ULWOS2_sendSignal(tULWOS2threadSignal signal);}
     extern "C" {void ULWOS2_waitForSignal(tULWOS2threadSignal signal);}
     extern "C" {void ULWOS2_killThread(void);}
@@ -132,7 +132,7 @@ extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
     extern "C" {void ULWOS2_startScheduler() __attribute__ ((noreturn));}
 #else
     // Standard C building environmet
-    void ULWOS2_setThreadTimerMs(tULWOS2Timer interval);
+    void ULWOS2_setThreadTimerMs(uint16_t interval);
     void ULWOS2_sendSignal(tULWOS2threadSignal signal);
     void ULWOS2_waitForSignal(tULWOS2threadSignal signal);
     void ULWOS2_killThread(void);
