@@ -18,6 +18,8 @@ Please check www.embeddedsystems.io for more information
 Check the examples folder for some multi-platform examples, or try it online: [![Run on Repl.it](https://repl.it/badge/github/fabiopjve/ULWOS2)](https://repl.it/github/fabiopjve/ULWOS2)
 
 ## Changes
+* v1.0.1
+  * Fixed issues with C++ on Arduino
 * v1.0.0 
   * Each thread now creates its own Thread Control Block as a static structure
   * TCB now uses pointers to create a linked list connecting all TCBs

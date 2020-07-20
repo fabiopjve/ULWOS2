@@ -15,67 +15,22 @@ tULWOS2threadControlBlock *ULWOS2_tempPointer;
 static tULWOS2threadControlBlock *currentTCB, *head;
 static uint8_t invalidateThreadPriorityQueue;
 
-/*
- * ULWOS2_orderPriority
- * Order all threads in READY state according to their priority
- */
-static void ULWOS2_orderPriority()
-{
-    tULWOS2threadControlBlock *currentNode = head;
-    tULWOS2threadControlBlock *previousNode, *previousNode2;
-    previousNode = NULL;
-    if (head == NULL) return;   // nothing to do if there are no threads
-    while (currentNode->nextThread != NULL) {
-        previousNode2 = previousNode; 
-        previousNode = currentNode;
-        currentNode = currentNode->nextThread;  // go to next node
-        if (currentNode->state == THREAD_READY && (currentNode->priority < previousNode->priority || previousNode->state !=THREAD_READY)) {
-            // swap places
-            if (previousNode2 != NULL) previousNode2->nextThread = currentNode; else
-                if (head == previousNode) head = currentNode;
-            previousNode->nextThread = currentNode->nextThread;
-            currentNode->nextThread = previousNode;
-            // following a swap, we restart from head
-            currentNode = head;
-            previousNode = NULL;
-        } 
-    }
-    invalidateThreadPriorityQueue = false;
-}
+// Internal function prototypes
+static void ULWOS2_orderPriority(void);
+static void ULWOS2_checkTimers(void);
 
 /*
  * ULWOS2_setThreadTimerMs
- * Set the thread timer to the desired interval in ms and set thread state to sleeping.
+ * Set the thread timer to the desired interval in ms (up to 65535ms) and set thread state to sleeping.
  * The thread will resume operation once the time interval has elapsed
  */
-void ULWOS2_setThreadTimerMs(tULWOS2Timer interval)
+void ULWOS2_setThreadTimerMs(uint16_t interval)
 {
     if (currentTCB != NULL) {
         currentTCB->timerStart = ULWOS2_getMilliseconds();
         currentTCB->timerInterval = interval;
         currentTCB->state = THREAD_WAITING_FOR_TIMER;
         invalidateThreadPriorityQueue = true;   // force a new sorting of the priority queue
-    }
-}
-
-/*
- * ULWOS2_checkTimers
- * Check all thread timers and resume the threads with expired timers
- */
-static void ULWOS2_checkTimers(void)
-{
-    tULWOS2threadControlBlock *thread = head;
-    tULWOS2Timer now = ULWOS2_getMilliseconds();
-    while (thread != NULL) {
-        if (thread->state == THREAD_WAITING_FOR_TIMER) {
-            // check if enough time have elapsed
-            if ((now-thread->timerStart) >= thread->timerInterval) {
-                // ok enough time have elapsed, this thread is ready to run again
-                thread->state = THREAD_READY;
-                invalidateThreadPriorityQueue = true;
-            }
-        }
-        thread = thread->nextThread;
     }
 }
 
@@ -165,6 +120,55 @@ tULWOS2threadControlBlock * ULWOS2_createThread(void(*thread)(), tULWOS2threadPr
         invalidateThreadPriorityQueue = true;
     }
     return ULWOS2_tempPointer;
+}
+
+/*
+ * ULWOS2_checkTimers
+ * Check all thread timers and resume the threads with expired timers
+ */
+static void ULWOS2_checkTimers(void)
+{
+    tULWOS2threadControlBlock *thread = head;
+    tULWOS2Timer now = ULWOS2_getMilliseconds();
+    while (thread != NULL) {
+        if (thread->state == THREAD_WAITING_FOR_TIMER) {
+            // check if enough time have elapsed
+            if ((now-thread->timerStart) >= thread->timerInterval) {
+                // ok enough time have elapsed, this thread is ready to run again
+                thread->state = THREAD_READY;
+                invalidateThreadPriorityQueue = true;
+            }
+        }
+        thread = thread->nextThread;
+    }
+}
+
+/*
+ * ULWOS2_orderPriority
+ * Order all threads in READY state according to their priority
+ */
+static void ULWOS2_orderPriority(void)
+{
+    tULWOS2threadControlBlock *currentNode = head;
+    tULWOS2threadControlBlock *previousNode, *previousNode2;
+    previousNode = NULL;
+    if (head == NULL) return;   // nothing to do if there are no threads
+    while (currentNode->nextThread != NULL) {
+        previousNode2 = previousNode; 
+        previousNode = currentNode;
+        currentNode = currentNode->nextThread;  // go to next node
+        if (currentNode->state == THREAD_READY && (currentNode->priority < previousNode->priority || previousNode->state !=THREAD_READY)) {
+            // swap places
+            if (previousNode2 != NULL) previousNode2->nextThread = currentNode; else
+                if (head == previousNode) head = currentNode;
+            previousNode->nextThread = currentNode->nextThread;
+            currentNode->nextThread = previousNode;
+            // following a swap, we restart from head
+            currentNode = head;
+            previousNode = NULL;
+        } 
+    }
+    invalidateThreadPriorityQueue = false;
 }
 
 /*
