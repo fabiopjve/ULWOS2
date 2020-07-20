@@ -8,6 +8,14 @@ ULWOS2 example 2 four threads on the MSP430F2013
 - Thread 2 - LED brightness control
 - Thread 3 - LED blinker on P1.1
 - Thread 4 - LED blinker on P1.2
+- Thread 5 - LED blinker on P1.3
+- Thread 6 - LED blinker on P1.4
+- Thread 7 - LED blinker on P1.5
+- Thread 8 - LED blinker on P1.6
+Note: this code is a demonstration only! Following ULWOS2 v1.0.0 RAM usage
+increased slightly and now this example is playing a dangerous game with a stack
+overflow, it is working as it is, but it would be safer to work with only seven
+threads.
 Author: Fábio Pereira
 Date: Jun, 28, 2020
 embeddedsystems.io
@@ -15,7 +23,7 @@ embeddedsystems.io
 *******************************************************************************/
 
 static int16_t milliSeconds;
-int16_t dutyCycle, period;
+uint8_t dutyCycle, period;
 
 tULWOS2Timer ULWOS2_getMilliseconds(void)
 {
@@ -51,16 +59,14 @@ void systemInit(void)
 // software PWM thread on P1.0
 void softPWMthread(void)
 {
-    static int16_t internalDutyCycle;
-    int16_t sleepTime;
+    int8_t sleepTime;
     ULWOS2_THREAD_START();
     while(1)
     {
-        internalDutyCycle = dutyCycle;
-        sleepTime = (internalDutyCycle * period) / 100;
+        sleepTime = (dutyCycle * period) / 100;
         P1OUT |= 0x01;				// turn LED on
         ULWOS2_THREAD_SLEEP_MS(sleepTime);
-        sleepTime = ((100 - internalDutyCycle) * period) / 100;
+        sleepTime = ((100 - dutyCycle) * period) / 100;
         P1OUT &= ~0x01;              // turn LED off
         ULWOS2_THREAD_SLEEP_MS(sleepTime);
     }
@@ -69,7 +75,7 @@ void softPWMthread(void)
 // LED brightness control (breathing)
 void breathThread(void)
 {
-    static bool direction = 0;
+    static uint8_t direction = 0;
     ULWOS2_THREAD_START();
     while(1)
     {
@@ -138,7 +144,7 @@ void blink5(void)
     }
 }
 
-// Blink an LED connected to pin P1.6 at ~32 Hz
+// Blink an LED connected to pin P1.6 at ~33 Hz
 void blink6(void)
 {
     ULWOS2_THREAD_START();
@@ -153,13 +159,15 @@ void main(void)
 {
     systemInit();
     ULWOS2_INIT();
-    ULWOS2_THREAD_CREATE(softPWMthread, 0);
-    ULWOS2_THREAD_CREATE(breathThread, 1);
+    
+    
     ULWOS2_THREAD_CREATE(blink1, 2);
+    ULWOS2_THREAD_CREATE(breathThread, 1);
+    ULWOS2_THREAD_CREATE(softPWMthread, 0);
     ULWOS2_THREAD_CREATE(blink2, 2);
     ULWOS2_THREAD_CREATE(blink3, 2);
     ULWOS2_THREAD_CREATE(blink4, 2);
     ULWOS2_THREAD_CREATE(blink5, 2);
-    ULWOS2_THREAD_CREATE(blink6, 2);   
+    ULWOS2_THREAD_CREATE(blink6, 2);
     ULWOS2_START_SCHEDULER();	
 }
