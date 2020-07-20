@@ -159,15 +159,13 @@ void main(void)
 {
     systemInit();
     ULWOS2_INIT();
-    
-    
-    ULWOS2_THREAD_CREATE(blink1, 2);
-    ULWOS2_THREAD_CREATE(breathThread, 1);
     ULWOS2_THREAD_CREATE(softPWMthread, 0);
+    ULWOS2_THREAD_CREATE(breathThread, 1);
+    ULWOS2_THREAD_CREATE(blink1, 2);
     ULWOS2_THREAD_CREATE(blink2, 2);
     ULWOS2_THREAD_CREATE(blink3, 2);
     ULWOS2_THREAD_CREATE(blink4, 2);
     ULWOS2_THREAD_CREATE(blink5, 2);
     ULWOS2_THREAD_CREATE(blink6, 2);
-    ULWOS2_START_SCHEDULER();	
+    ULWOS2_START_SCHEDULER();
 }
