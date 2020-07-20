@@ -1,9 +1,6 @@
-#include <msp430.h>
-#include "../../src/ULWOS2.h"
-
 /******************************************************************************
 
-ULWOS2 example 2 four threads on the MSP430F2013
+ULWOS2 example 2 eight threads on the MSP430F2013
 - Thread 1 - software PWM on P1.0
 - Thread 2 - LED brightness control
 - Thread 3 - LED blinker on P1.1
@@ -16,11 +13,15 @@ Note: this code is a demonstration only! Following ULWOS2 v1.0.0 RAM usage
 increased slightly and now this example is playing a dangerous game with a stack
 overflow, it is working as it is, but it would be safer to work with only seven
 threads.
+
 Author: Fábio Pereira
 Date: Jun, 28, 2020
 embeddedsystems.io
 
 *******************************************************************************/
+
+#include <msp430.h>
+#include "../../src/ULWOS2.h"
 
 static int16_t milliSeconds;
 uint8_t dutyCycle, period;
