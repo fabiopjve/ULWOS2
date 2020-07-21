@@ -1,22 +1,23 @@
 /******************************************************************************
 
-ULWOS2 example 2 eight threads on the MSP430F2013
-- Thread 1 - software PWM on P1.0
-- Thread 2 - LED brightness control
-- Thread 3 - LED blinker on P1.1
-- Thread 4 - LED blinker on P1.2
-- Thread 5 - LED blinker on P1.3
-- Thread 6 - LED blinker on P1.4
-- Thread 7 - LED blinker on P1.5
-- Thread 8 - LED blinker on P1.6
-Note: this code is a demonstration only! Following ULWOS2 v1.0.0 RAM usage
-increased slightly and now this example is playing a dangerous game with a stack
-overflow, it is working as it is, but it would be safer to work with only seven
-threads.
+    ULWOS2 example 2 eight threads on the MSP430F2013
+    - Thread 1 - software PWM on P1.0
+    - Thread 2 - LED brightness control
+    - Thread 3 - LED blinker on P1.1
+    - Thread 4 - LED blinker on P1.2
+    - Thread 5 - LED blinker on P1.3
+    - Thread 6 - LED blinker on P1.4
+    - Thread 7 - LED blinker on P1.5
+    - Thread 8 - LED blinker on P1.6
+    
+    Note: this code is a demonstration only! Following ULWOS2 v1.0.0 RAM usage
+    increased slightly and now this example is playing a dangerous game with a stack
+    overflow, it is working as it is, but it would be safer to work with only seven
+    threads.
 
-Author: Fábio Pereira
-Date: Jun, 28, 2020
-embeddedsystems.io
+    Author: Fábio Pereira
+    Date: Jun, 28, 2020
+    embeddedsystems.io
 
 *******************************************************************************/
 
@@ -76,17 +77,19 @@ void softPWMthread(void)
 // LED brightness control (breathing)
 void breathThread(void)
 {
-    static uint8_t direction = 0;
     ULWOS2_THREAD_START();
     while(1)
     {
-        if (!direction) dutyCycle++; else dutyCycle--;
-        if (dutyCycle == 100 || dutyCycle == 0) 
-        {
-            direction = !direction;
-            // wait 250ms before starting another cycle
-            if (!direction) ULWOS2_THREAD_SLEEP_MS(250);
-        } else ULWOS2_THREAD_SLEEP_MS(10); // update PWM every 10ms
+        while (dutyCycle < 100) {
+          dutyCycle++;
+          ULWOS2_THREAD_SLEEP_MS(10); // update PWM every 10ms
+        }
+        while (dutyCycle > 0) {
+          dutyCycle--;
+          ULWOS2_THREAD_SLEEP_MS(10); // update PWM every 10ms
+        }
+        // wait 250ms before starting another cycle
+        ULWOS2_THREAD_SLEEP_MS(250);
     }
 }
 
