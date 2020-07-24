@@ -11,8 +11,8 @@
 
 #include <ULWOS2.h>
 
-#define BUTTON_PIN    2   // the pin connected to the push button
-#define DEBOUCE_TIME  30  // debounce time in ms
+#define BUTTON_PIN      2   // the pin connected to the push button
+#define DEBOUNCE_TIME   30  // debounce time in ms
 
 void debouncer(void)
 {

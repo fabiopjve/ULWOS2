@@ -4,6 +4,8 @@
   - Thread 2 - LED brightness control
   - Thread 3 - LED display multiplexer
   - Thread 4 - seconds timer
+  - Thread 5 - reset key processing (resets display counting)
+  - Thread 6 - direction key processing (changes count direction)
 
   Use 220R resistors to connect display segment pins to Arduino pins
   
@@ -28,32 +30,36 @@
 #define SEG_ON(x)   digitalWrite(x,1)
 #define SEG_OFF(x)  digitalWrite(x,0)
 #define DISP_ALL_OFF  {SEG_ON(DISP_COM1);SEG_ON(DISP_COM2);SEG_ON(DISP_COM3);SEG_ON(DISP_COM4);}
-#define SHOW_DISP1  {SEG_OFF(DISP_COM1);SEG_ON(DISP_COM2);SEG_ON(DISP_COM3);SEG_ON(DISP_COM4);}
-#define SHOW_DISP2  {SEG_ON(DISP_COM1);SEG_OFF(DISP_COM2);SEG_ON(DISP_COM3);SEG_ON(DISP_COM4);}
-#define SHOW_DISP3  {SEG_ON(DISP_COM1);SEG_ON(DISP_COM2);SEG_OFF(DISP_COM3);SEG_ON(DISP_COM4);}
-#define SHOW_DISP4  {SEG_ON(DISP_COM1);SEG_ON(DISP_COM2);SEG_ON(DISP_COM3);SEG_OFF(DISP_COM4);}
-#define SHOW_NONE {SEG_OFF(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_OFF(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_OFF(DISP_SEG_G);}
-#define SHOW0   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_OFF(DISP_SEG_G);}
-#define SHOW1   {SEG_OFF(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_OFF(DISP_SEG_G);}
-#define SHOW2   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_OFF(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW3   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW4   {SEG_OFF(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW5   {SEG_ON(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW6   {SEG_ON(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW7   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_OFF(DISP_SEG_G);}
-#define SHOW8   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOW9   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_OFF(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOWA   {SEG_ON(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOWB   {SEG_OFF(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOWC   {SEG_ON(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_OFF(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_OFF(DISP_SEG_G);}
-#define SHOWD   {SEG_OFF(DISP_SEG_A);SEG_ON(DISP_SEG_B);SEG_ON(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_OFF(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOWE   {SEG_ON(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_OFF(DISP_SEG_C);SEG_ON(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
-#define SHOWF   {SEG_ON(DISP_SEG_A);SEG_OFF(DISP_SEG_B);SEG_OFF(DISP_SEG_C);SEG_OFF(DISP_SEG_D);SEG_ON(DISP_SEG_E);SEG_ON(DISP_SEG_F);SEG_ON(DISP_SEG_G);}
+
+#define RESET_BUTTON_PIN        A0  // the pin connected to the reset push button
+#define DIRECTION_BUTTON_PIN    A1  // the pin connected to the direction push button
+#define DEBOUNCE_TIME           30  // debounce time in ms
 
 #define DISPLAY_TIME  1 // in ms 
 
+uint8_t dispDecoder[17] = {
+    0b00000000, // display off
+    0b11111100, // 0
+    0b01100000, // 1
+    0b11011010, // 2
+    0b11110010, // 3
+    0b01100110, // 4
+    0b10110110, // 5
+    0b10111110, // 6
+    0b11100000, // 7
+    0b11111110, // 8
+    0b11110110, // 9
+    0b11101110, // A
+    0b00111110, // b
+    0b10011100, // C
+    0b01111010, // d
+    0b10011110, // e
+    0b10001110, // F
+};
+
 uint8_t dutyCycle = 0, period = 25; // breathing LED
 uint16_t valueToDisplay = 0;
+bool direction = false;
 
 // Software PWM thread
 void softPWMthread(void)
@@ -94,37 +100,27 @@ void breathThread(void)
     }
 }
 
-// Turn off all displays and segments
-void allDisplaysOff(void)
-{
-  DISP_ALL_OFF;
-  SHOW_NONE;
-}
-
 // decode and display a digit (0 to F)
 // is supressZero is true then value zero is not displayed
 void displayDecode(uint8_t data, bool suppressZero)
 {
-  allDisplaysOff();
-  if (!data && suppressZero) return;
-  switch (data) {
-    case 0: SHOW0; break;
-    case 1: SHOW1; break;
-    case 2: SHOW2; break;
-    case 3: SHOW3; break;
-    case 4: SHOW4; break;
-    case 5: SHOW5; break;
-    case 6: SHOW6; break;
-    case 7: SHOW7; break;
-    case 8: SHOW8; break;
-    case 9: SHOW9; break;
-    case 10: SHOWA; break;
-    case 11: SHOWB; break;
-    case 12: SHOWC; break;
-    case 13: SHOWD; break;
-    case 14: SHOWE; break;
-    case 15: SHOWF; break;
-  }
+    uint8_t dispSegments;
+    DISP_ALL_OFF;
+    if (data<16) {
+        if (!data && suppressZero) data = 0;    // blank display
+        else data++;    // increment data so we can access the right decoder
+    } else {
+        // blank display
+        data = 0;
+    }
+    dispSegments = dispDecoder[data];
+    digitalWrite(DISP_SEG_A, dispSegments & 0x80);
+    digitalWrite(DISP_SEG_B, dispSegments & 0x40);
+    digitalWrite(DISP_SEG_C, dispSegments & 0x20);
+    digitalWrite(DISP_SEG_D, dispSegments & 0x10);
+    digitalWrite(DISP_SEG_E, dispSegments & 0x08);
+    digitalWrite(DISP_SEG_F, dispSegments & 0x04);
+    digitalWrite(DISP_SEG_G, dispSegments & 0x02);
 }
 
 // Display multiplexing thread
@@ -134,7 +130,6 @@ void displayThread(void)
     uint8_t digit;
     static bool suppressZero;  
     ULWOS2_THREAD_START();
-    allDisplaysOff();
     while(1)
     {
         suppressZero = true;  // set this starting value to false if you don't want to supress zeros
@@ -144,41 +139,90 @@ void displayThread(void)
         if (digit) suppressZero = false;    // if this digit is not zero, stop suppressing zeros
         displayDecode(digit, suppressZero); // decode the digit and send it to display
         displayData -= (uint16_t)digit * 1000;  // update display data (remove thousands)
-        SHOW_DISP1; // enable display 1 (thousands)
+        SEG_OFF(DISP_COM1); // enable display 1 (thousands)
         ULWOS2_THREAD_SLEEP_MS(DISPLAY_TIME);   // wait for some time
+        SEG_ON(DISP_COM1); // enable display 1 (thousands)
         // DIGIT TWO - HUNDREDS !!!
         digit = displayData/100;            // calculate hundreds
         if (digit) suppressZero = false;    // if this digit is not zero, stop suppressing zeros
         displayDecode(digit, suppressZero); // decode the digit and send it to display
         displayData -= (uint16_t)digit * 100;   // update display data (remove hundreds)
-        SHOW_DISP2; // enable display 2 (hundreds)
+        SEG_OFF(DISP_COM2); // enable display 2 (hundreds)
         ULWOS2_THREAD_SLEEP_MS(DISPLAY_TIME);   // wait for some time
+        SEG_ON(DISP_COM2); // enable display 2 (hundreds)
         // DIGIT THREE - TENS !!!
         digit = displayData/10;             // calculate tens
         if (digit) suppressZero = false;    // if this digit is not zero, stop suppressing zeros
         displayDecode(digit, suppressZero); // decode the digit and send it to display
         displayData -= (uint16_t)digit * 10;// update display data (remove tens)
-        SHOW_DISP3; // enable display 3 (tens)
+        SEG_OFF(DISP_COM3); // enable display 3 (tens)
         ULWOS2_THREAD_SLEEP_MS(DISPLAY_TIME);   // wait for some time
+        SEG_ON(DISP_COM3); // enable display 3 (tens)        
         // DIGIT FOUR  - LAST ONE !!! 
         displayDecode(displayData, false);  // decode the remainder and send it to display (do not suppress zero)
-        SHOW_DISP4; // enable display 4 (units)
-        ULWOS2_THREAD_SLEEP_MS(DISPLAY_TIME);   // wait for some time      
+        SEG_OFF(DISP_COM4); // enable display 4 (units)
+        ULWOS2_THREAD_SLEEP_MS(DISPLAY_TIME);   // wait for some time
+        SEG_ON(DISP_COM4); // enable display 4 (units)     
     }    
 }
 
-// Seconds thread
-void oneSecondThread(void)
+// Seconds thread - increments valueToDisplay every one second
+void secondsThread(void)
 {
     ULWOS2_THREAD_START();
     DISP_ALL_OFF;
     while(1)
     {
-        valueToDisplay++;
-        // we can't display values higher than 9999, so wrap around
-        if (valueToDisplay >= 10000) valueToDisplay = 0;
+        if (!direction) {
+            valueToDisplay++;
+            // we can't display values higher than 9999, so wrap around
+            if (valueToDisplay >= 10000) valueToDisplay = 0;
+        }
+        else {
+            valueToDisplay--;
+            // we can't display values higher than 9999, so wrap around
+            if (valueToDisplay >= 10000) valueToDisplay = 9999;
+        }
         // sleep for one second
         ULWOS2_THREAD_SLEEP_MS(1000);
+    }
+}
+
+// debounces reset button, if button is pressed, resets display count
+void processResetButtonThread(void)
+{
+    ULWOS2_THREAD_START();  // this is necessary for each thread in ULWOS2!
+    while (1) {
+        // wait for button press
+        while (digitalRead(RESET_BUTTON_PIN) == HIGH) ULWOS2_THREAD_SLEEP_MS(5);  // wait 5ms for next sample
+        // if we are here, the button was pressed!
+        // wait to make sure it is still pressed (debounce it)
+        ULWOS2_THREAD_SLEEP_MS(DEBOUNCE_TIME);
+        if (digitalRead(RESET_BUTTON_PIN) == LOW) {
+            // key is pressed, toggle LED state
+            valueToDisplay = 0;
+            // now wait until the key is released
+            while (digitalRead(RESET_BUTTON_PIN) == LOW) ULWOS2_THREAD_SLEEP_MS(5);  // wait 5ms for next try
+        }
+    }
+}
+
+// debounces direction button, if button is pressed, change counting direction
+void processDirectionButtonThread(void)
+{
+    ULWOS2_THREAD_START();  // this is necessary for each thread in ULWOS2!
+    while (1) {
+        // wait for button press
+        while (digitalRead(DIRECTION_BUTTON_PIN) == HIGH) ULWOS2_THREAD_SLEEP_MS(5);  // wait 5ms for next sample
+        // if we are here, the button was pressed!
+        // wait to make sure it is still pressed (debounce it)
+        ULWOS2_THREAD_SLEEP_MS(DEBOUNCE_TIME);
+        if (digitalRead(DIRECTION_BUTTON_PIN) == LOW) {
+            // key is pressed, toggle LED state
+            direction = !direction;
+            // now wait until the key is released
+            while (digitalRead(DIRECTION_BUTTON_PIN) == LOW) ULWOS2_THREAD_SLEEP_MS(5);  // wait 5ms for next try
+        }
     }
 }
 
@@ -187,8 +231,12 @@ void setup() {
     ULWOS2_THREAD_CREATE(softPWMthread, 0);
     ULWOS2_THREAD_CREATE(breathThread, 2);
     ULWOS2_THREAD_CREATE(displayThread, 1);
-    ULWOS2_THREAD_CREATE(oneSecondThread, 3);
+    ULWOS2_THREAD_CREATE(secondsThread, 3);
+    ULWOS2_THREAD_CREATE(processResetButtonThread, 3);
+    ULWOS2_THREAD_CREATE(processDirectionButtonThread, 3);
     pinMode(LED_BUILTIN, OUTPUT);  // initialize LED I/O pin as output
+    pinMode(RESET_BUTTON_PIN, INPUT_PULLUP);
+    pinMode(DIRECTION_BUTTON_PIN, INPUT_PULLUP);
     // Set all display pins as outputs
     pinMode(DISP_SEG_A, OUTPUT);
     pinMode(DISP_SEG_B, OUTPUT);
