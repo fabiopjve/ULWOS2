@@ -13,9 +13,9 @@ void thread1(void)
   while(1)
   {
     digitalWrite(LED_BUILTIN, HIGH);	// turn LED on
-    ULWOS2_THREAD_SLEEP_MS(50);	// sleep for 50ms
-    digitalWrite(LED_BUILTIN, LOW);	// turn LED off
-    ULWOS2_THREAD_SLEEP_MS(500);	// sleep for 500ms
+    ULWOS2_THREAD_SLEEP_MS(50);	      // sleep for 50ms
+    digitalWrite(LED_BUILTIN, LOW);	  // turn LED off
+    ULWOS2_THREAD_SLEEP_MS(500);	    // sleep for 500ms
   }
 }  
 

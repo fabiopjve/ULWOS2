@@ -27,9 +27,9 @@ embeddedsystems.io
 
 // This full initializer is required by g++ (Arduino)
 #ifdef ULWOS2_SIGNALS
-#define _TCB_INIT {NULL,NULL,NULL,0,0,0,THREAD_NOT_READY,0}
+#define _TCB_INIT {NULL,NULL,NULL,0,0,THREAD_NOT_READY,0,0}
 #else
-#define _TCB_INIT {NULL,NULL,NULL,0,0,0,THREAD_NOT_READY}
+#define _TCB_INIT {NULL,NULL,NULL,0,0,THREAD_NOT_READY,0}
 #endif
 /*
  * ULWOS2_THREAD_START() - this is the initial constructor for any thread. It is responsible for
@@ -107,16 +107,16 @@ typedef uint8_t tULWOS2threadPriority;
 typedef uint8_t tULWOS2threadSignal;
 
 typedef struct sTCB {
-  void (*entryPoint)();                     // thread entry point
-  void (*resumePoint)();                    // thread resume point
-  struct sTCB *nextThread;                  // pointer to the next thread
-  uint16_t timerInterval;                   // desired timer interval in ms
-  tULWOS2Timer timerStart;                  // milliseconds when timer was set 
-  tULWOS2threadPriority priority;           // priority
-  eULWOS2threadState state;                 // current state
-  #ifdef ULWOS2_SIGNALS
-  tULWOS2threadSignal signal;               // the signal this thread is waiting for
-  #endif
+    void (*entryPoint)();                     // thread entry point
+    void (*resumePoint)();                    // thread resume point
+    struct sTCB *nextThread;                  // pointer to the next thread
+    uint16_t timerInterval;                   // desired timer interval in ms
+    tULWOS2threadPriority priority;           // priority
+    eULWOS2threadState state;                 // current state  
+    tULWOS2Timer timerStart;                  // milliseconds when timer was set 
+    #ifdef ULWOS2_SIGNALS
+    tULWOS2threadSignal signal;               // the signal this thread is waiting for
+    #endif
 } tULWOS2threadControlBlock;
 
 extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
