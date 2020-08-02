@@ -3,6 +3,9 @@
 
 This is the change history of ULWOS2.
 
+* v1.0.4
+  * Included a simple unit test (Linux-only)
+  * Included RGB breathing LED for HiFive 1 (using Arduino)
 * v1.0.3
   * Improvements to 7-segment counter Arduino example
 * v1.0.2
