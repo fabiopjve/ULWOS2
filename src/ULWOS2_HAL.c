@@ -1,6 +1,6 @@
 #include "ULWOS2_HAL.h"
 
-#if ULWOS2_TARGET == ULWOS2_TARGET_LINUX
+#if ULWOS2_TARGET == ULWOS2_TARGET_LINUX || ULWOS2_TARGET == ULWOS2_TARGET_UNITTEST
     #include <sys/time.h>
     // This is get milliseconds for Linux targets
     tULWOS2Timer ULWOS2_getMilliseconds(void)

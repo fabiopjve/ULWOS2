@@ -96,7 +96,6 @@ embeddedsystems.io
  */
 typedef enum {
     THREAD_NOT_READY,
-    THREAD_SLEEPING,
     THREAD_WAITING_FOR_SIGNAL,
     THREAD_WAITING_FOR_TIMER,
     THREAD_READY
@@ -105,10 +104,11 @@ typedef enum {
 typedef uint8_t tULWOS2threadHandler;
 typedef uint8_t tULWOS2threadPriority;
 typedef uint8_t tULWOS2threadSignal;
+typedef void(*tVoidFunctionPointer)();
 
 typedef struct sTCB {
-    void (*entryPoint)();                     // thread entry point
-    void (*resumePoint)();                    // thread resume point
+    tVoidFunctionPointer entryPoint;          // thread entry point
+    tVoidFunctionPointer resumePoint;         // thread resume point
     struct sTCB *nextThread;                  // pointer to the next thread
     uint16_t timerInterval;                   // desired timer interval in ms
     tULWOS2threadPriority priority;           // priority
