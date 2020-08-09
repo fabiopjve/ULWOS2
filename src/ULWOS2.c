@@ -14,6 +14,9 @@ embeddedsystems.io
 tULWOS2threadControlBlock *ULWOS2_tempPointer;
 static tULWOS2threadControlBlock *currentTCB, *head;
 static uint8_t invalidateThreadPriorityQueue;
+#ifdef ULWOS2_SIGNALS
+    static void * queuePointer;
+#endif
 
 // Internal function prototypes
 static void ULWOS2_orderPriority(void);
@@ -69,6 +72,24 @@ void ULWOS2_sendSignal(tULWOS2threadSignal signal)
 }
 #endif
 
+#ifdef ULWOS2_SIGNALS
+void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue)
+{
+    queue->head++;
+    if (queue->head >= queue->queueSize) queue->head = 0;
+    queue->queueUsed++;
+}
+#endif
+
+#ifdef ULWOS2_SIGNALS
+void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue)
+{
+    queue->tail++;
+    if (queue->tail >= queue->queueSize) queue->tail = 0;
+    queue->queueUsed--;
+}
+#endif
+
 /*
  * ULWOS2_killThread
  * Kill the thread, it won't run anymore
@@ -89,6 +110,7 @@ void ULWOS2_killThread(void)
 void ULWOS2_init()
 {
     currentTCB = NULL;
+    queuePointer = NULL;
 }
 
 /*
@@ -124,7 +146,7 @@ tULWOS2threadControlBlock * ULWOS2_createThread(void(*thread)(), tULWOS2threadPr
 
 /*
  * ULWOS2_checkTimers
- * Check all thread timers and resume the threads with expired timers
+ * Check alls threads and resume the ones waiting for a timer that is expired
  */
 static void ULWOS2_checkTimers(void)
 {

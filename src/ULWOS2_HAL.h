@@ -29,6 +29,7 @@
 	typedef uint64_t tULWOS2Timer;
 #elif ULWOS2_TARGET == ULWOS2_TARGET_ARDUINO
 	typedef uint32_t tULWOS2Timer;
+	#define ULWOS2_SIGNALS	// signals enabled by default on Arduinos
 #elif ULWOS2_TARGET == ULWOS2_TARGET_PARTICLE
 	typedef uint32_t tULWOS2Timer;
 #elif ULWOS2_TARGET == ULWOS2_TARGET_MSP430

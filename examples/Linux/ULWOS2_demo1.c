@@ -9,8 +9,8 @@ embeddedsystems.io
 #include <stdio.h>
 #include "../../src/ULWOS2.h"
 
-#define SIGNAL_RUN_THREAD3  1
-#define SIGNAL_RUN_THREAD4  2
+ULWOS2_DEFINE_SIGNAL(SIGNAL_RUN_THREAD3);
+ULWOS2_DEFINE_SIGNAL(SIGNAL_RUN_THREAD4);
 
 #define CLEAR_TERMINAL() printf("\x1B[2J")
 #define PRINT_RED() printf("\x1B[31m")
@@ -123,6 +123,6 @@ int main()
     ULWOS2_THREAD_CREATE(testThread1, 10);
     ULWOS2_THREAD_CREATE(testThread2, 10);
     ULWOS2_THREAD_CREATE(testThread3, 1);
-    ULWOS2_THREAD_CREATE(testThread4, 2);    
+    ULWOS2_THREAD_CREATE(testThread4, 2);
     ULWOS2_START_SCHEDULER();
 }
