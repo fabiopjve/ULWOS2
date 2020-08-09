@@ -3,6 +3,11 @@
 
 This is the change history of ULWOS2.
 
+* v1.1.0
+  * Added message queues to ULWOS2!
+  * Added Arduino keywords.txt
+  * Added new Arduino example using messages
+  * Improved unit tests to include some message queue testing
 * v1.0.4
   * Included a simple unit test (Linux-only)
   * Included RGB breathing LED for HiFive 1 (using Arduino)
