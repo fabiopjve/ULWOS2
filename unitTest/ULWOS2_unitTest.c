@@ -17,8 +17,8 @@ tULWOS2threadControlBlock *TCB[4];
 
 ULWOS2_DEFINE_SIGNAL(THREAD2_START);
 ULWOS2_DEFINE_SIGNAL(THREAD3_START);
-ULWOS2_CREATE_QUEUE(TEST_QUEUE1, uint8_t, 4);
-ULWOS2_CREATE_QUEUE(TEST_QUEUE2, uint32_t, 8);
+ULWOS2_CREATE_MESSAGE_QUEUE(TEST_QUEUE1, uint8_t, 4);
+ULWOS2_CREATE_MESSAGE_QUEUE(TEST_QUEUE2, uint32_t, 8);
 
 void testThread1(void)
 {
@@ -47,9 +47,9 @@ void testThread3(void)
     ULWOS2_THREAD_START();
     ULWOS2_THREAD_WAIT_FOR_SIGNAL(THREAD3_START);
     globalTest = 6;
-    ULWOS2_TRY_DEQUEUE(TEST_QUEUE2, queueTest);
+    ULWOS2_MESSAGE_TRY_DEQUEUE(TEST_QUEUE2, queueTest);
     if (queueTest == 123456) globalTest = 7; else globalTest = 8;
-    ULWOS2_TRY_DEQUEUE(TEST_QUEUE2, queueTest);
+    ULWOS2_MESSAGE_TRY_DEQUEUE(TEST_QUEUE2, queueTest);
     if (queueTest == 7654321) globalTest = 9; else globalTest = 10;
     ULWOS2_THREAD_KILL();
 }
@@ -96,11 +96,11 @@ void unitTest_controlThread(void)
     // thread 2 should be ready to run but as it is lower priority, it should not run yet
     TEST(TCB[2]->state == THREAD_READY);    // thread 3 should be ready
     TEST(globalTest==0);        // as thread 3 didn't run yet, globalTest should still be 0
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE2,123456));   // successfully enqueued data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE2,123456));   // successfully enqueued data
     ULWOS2_THREAD_SLEEP_MS(1);
     TEST(globalTest==7);        // thread 3 dequeued data correctly
     TEST(TCB[2]->state == THREAD_WAITING_FOR_SIGNAL);// thread 3 should be waiting for signal (blocked due to queue empty)
-    ULWOS2_TRY_ENQUEUE(TEST_QUEUE2,7654321);
+    ULWOS2_MESSAGE_TRY_ENQUEUE(TEST_QUEUE2,7654321);
     ULWOS2_THREAD_SLEEP_MS(1);
     TEST(globalTest==9);        // thread 3 dequeued data correctly
     TEST(TCB[2]->state == THREAD_NOT_READY);// thread 2 should not be ready (killed)
@@ -129,17 +129,17 @@ int main()
     TEST(TCB[3]->resumePoint > unitTest_controlThread); // make sure resume point is after entry point
     TEST(TCB[3]->nextThread == NULL);                   // the last TCB should point to NULL
     // Check queue operation
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,10));               // make sure we can enqueue data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,10));               // make sure we can enqueue data
     uint8_t testData = 0;
-    TEST(ULWOS2_DEQUEUE(TEST_QUEUE1,testData));         // we successfully dequeued data
+    TEST(ULWOS2_MESSAGE_DEQUEUE(TEST_QUEUE1,testData));         // we successfully dequeued data
     TEST(testData == 10);                               // dequeued data was correct
-    TEST(ULWOS2_DEQUEUE(TEST_QUEUE1,testData)==false);  // we should not be able to dequeue again (queue is empty)
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,20));               // make sure we can enqueue data
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,30));               // make sure we can enqueue data
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,40));               // make sure we can enqueue data
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,50));               // make sure we can enqueue data
-    TEST(ULWOS2_ENQUEUE(TEST_QUEUE1,60)==false);        // make should not be able to enqueue again (queue is full)
-    TEST(ULWOS2_DEQUEUE(TEST_QUEUE1,testData));         // we successfully dequeued data
+    TEST(ULWOS2_MESSAGE_DEQUEUE(TEST_QUEUE1,testData)==false);  // we should not be able to dequeue again (queue is empty)
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,20));               // make sure we can enqueue data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,30));               // make sure we can enqueue data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,40));               // make sure we can enqueue data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,50));               // make sure we can enqueue data
+    TEST(ULWOS2_MESSAGE_ENQUEUE(TEST_QUEUE1,60)==false);        // make should not be able to enqueue again (queue is full)
+    TEST(ULWOS2_MESSAGE_DEQUEUE(TEST_QUEUE1,testData));         // we successfully dequeued data
     TEST(testData == 20);                               // dequeued data was correct
 
     // now start the scheduler

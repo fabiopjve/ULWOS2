@@ -69,53 +69,54 @@ embeddedsystems.io
 #define ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal) _ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal)
 
 /*
- * ULWOS2_CREATE_QUEUE(id,type,size) 
- * Create a new queue using "id" as identifier. The queue created by this call is going to 
+ * ULWOS2_CREATE_MESSAGE_QUEUE(id,type,size) 
+ * Create a new message queue using "id" as identifier. The queue created by this call is going to 
  * have "size" elements of type "type"
  * Example: in order to create a 16-level deep queue of chars named MY_QUEUE use
- * ULWOS2_CREATE_QUEUE(MY_QUEUE, char, 16)
+ * ULWOS2_CREATE_MESSAGE_QUEUE(MY_QUEUE, char, 16)
  * Note: queues created this way are only accessible within the same module (file). In
  * order to have a globally accessible queue, define it in a separate header and include
  * that header in all modules that are going to access it
  */
-#define ULWOS2_CREATE_QUEUE(id,type,size)  _ULWOS2_CREATE_QUEUE(id,type,size)
+#define ULWOS2_CREATE_MESSAGE_QUEUE(id,type,size)  _ULWOS2_CREATE_MESSAGE_QUEUE(id,type,size)
 
 /*
- * ULWOS2_ENQUEUE(id,data)
- * Enqueue data into the specified queue "id". This command does not block the thread and
- * can be used from outside thread code.
+ * ULWOS2_MESSAGE_ENQUEUE(id,data)
+ * Enqueue data into the message queue "id". This command does not block the thread 
+ * and can be used from outside thread code.
  * Returns:
  *  true - data was successfully queued
  *  false - data was not queued (queue is full)
  */
-#define ULWOS2_ENQUEUE(id,data) _ULWOS2_ENQUEUE(id,data)
+#define ULWOS2_MESSAGE_ENQUEUE(id,data) _ULWOS2_MESSAGE_ENQUEUE(id,data)
 
 /*
- * ULWOS2_TRY_ENQUEUE(id,data)
- * Tries to enqueue data into the specified queue "id". This command will block the thread
- * if the queue is full (waiting until it has space available) and can only be used inside 
- * a thread.
+ * ULWOS2_MESSAGE_TRY_ENQUEUE(id,data)
+ * Tries to enqueue data into the message queue "id". If the message queue is full, this
+ * command will block the thread until the queue has space available.
+ * Note that this command can only be used inside a thread!
  */
-#define ULWOS2_TRY_ENQUEUE(id,data) _ULWOS2_TRY_ENQUEUE(id,data)  
+#define ULWOS2_MESSAGE_TRY_ENQUEUE(id,data) _ULWOS2_MESSAGE_TRY_ENQUEUE(id,data)  
 
 /*
- * ULWOS2_DEQUEUE(id, data)
- * Dequeue data from the specified queue "id". This command does not block the thread and
+ * ULWOS2_MESSAGE_DEQUEUE(id, data)
+ * Dequeue data from the message queue "id". This command does not block the thread and
  * can be used from outside thread code.
  * Note that this is a macro and it directly changes the contents of "data" variable. You
- * don't need to pass a pointer to the variable.
+ * don't need to pass a pointer to that variable.
  * Returns:
  *  true - data was successfully dequeued
  *  false - data was not dequeued (queue is empty)
  */
-#define ULWOS2_DEQUEUE(id, data)    _ULWOS2_DEQUEUE(id, data)
+#define ULWOS2_MESSAGE_DEQUEUE(id, data)    _ULWOS2_MESSAGE_DEQUEUE(id, data)
 
 /*
- * ULWOS2_TRY_DEQUEUE(id,data)
- * Tries to dequeue data from the specified queue "id". This command will block the thread
- * if the queue is empty (waiting until data is available) and can only be used inside a thread.
+ * ULWOS2_MESSAGE_TRY_DEQUEUE(id,data)
+ * Tries to dequeue data from the message queue "id". If the message queue is empty, this
+ * command will block the thread until the queue has data available.
+ * Note that this command can only be used inside a thread!
  */
-#define ULWOS2_TRY_DEQUEUE(id, data) _ULWOS2_TRY_DEQUEUE(id, data) 
+#define ULWOS2_MESSAGE_TRY_DEQUEUE(id, data) _ULWOS2_MESSAGE_TRY_DEQUEUE(id, data) 
 
 /*
  * ULWOS2_THREAD_RESET() - forces the thread to resume operation from its initial state. Note that
@@ -153,25 +154,25 @@ embeddedsystems.io
                                                 ULWOS2_ASSERT(signal<256,SIGNAL_ID_DOES_NOT_FIT_8BITS);
 #define _ULWOS2_THREAD_SEND_SIGNAL(signal)      ({ULWOS2_sendSignal(signal); ULWOS2_THREAD_YIELD();})
 #define _ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal)  ({ULWOS2_waitForSignal(signal); ULWOS2_THREAD_YIELD();})
-#define _ULWOS2_CREATE_QUEUE(id,type,size)      type id##_QUEUE[size];\
-                                                tULWOS2_queueCTRL id##_CTRL = {.queueSize = size, .queueUsed = 0, .head = 0, .tail = 0};\
+#define _ULWOS2_CREATE_MESSAGE_QUEUE(id,type,size)      type id##_QUEUE[size];\
+                                                tULWOS2_queueCTRL id##_CTRL = { 0, 0, 0, size};\
                                                 ULWOS2_DEFINE_SIGNAL(id)\
                                                 ULWOS2_ASSERT(size<256,QUEUE_SIZE_DOES_NOT_FIT_8BITS)
-#define _ULWOS2_ENQUEUE(id,data)                ((id##_CTRL.queueUsed < id##_CTRL.queueSize) ? \
+#define _ULWOS2_MESSAGE_ENQUEUE(id,data)        ((id##_CTRL.queueUsed < id##_CTRL.queueSize) ? \
                                                 id##_QUEUE[id##_CTRL.head] = data,\
                                                 ULWOS2_updateEnqueue(&id##_CTRL),\
                                                 ULWOS2_sendSignal(id),true\
                                                 :false)
-#define _ULWOS2_TRY_ENQUEUE(id,data)            {while(id##_CTRL.queueUsed >= id##_CTRL.queueSize) {ULWOS2_THREAD_WAIT_FOR_SIGNAL(id);}\
+#define _ULWOS2_MESSAGE_TRY_ENQUEUE(id,data)    {while(id##_CTRL.queueUsed >= id##_CTRL.queueSize) {ULWOS2_THREAD_WAIT_FOR_SIGNAL(id);}\
                                                 id##_QUEUE[id##_CTRL.head] = data;\
                                                 ULWOS2_updateEnqueue(&id##_CTRL);\
                                                 ULWOS2_sendSignal(id);}
-#define _ULWOS2_DEQUEUE(id, data)               ((id##_CTRL.queueUsed > 0) ? \
+#define _ULWOS2_MESSAGE_DEQUEUE(id, data)       ((id##_CTRL.queueUsed > 0) ? \
                                                 data = id##_QUEUE[id##_CTRL.tail],\
                                                 ULWOS2_updateDequeue(&id##_CTRL),\
                                                 ULWOS2_sendSignal(id),true\
                                                 :false)
-#define _ULWOS2_TRY_DEQUEUE(id, data)           {while (id##_CTRL.queueUsed == 0) {ULWOS2_THREAD_WAIT_FOR_SIGNAL(id);} \
+#define _ULWOS2_MESSAGE_TRY_DEQUEUE(id, data)   {while (id##_CTRL.queueUsed == 0) {ULWOS2_THREAD_WAIT_FOR_SIGNAL(id);} \
                                                 data = id##_QUEUE[id##_CTRL.tail];\
                                                 ULWOS2_updateDequeue(&id##_CTRL);\
                                                 ULWOS2_sendSignal(id);}
@@ -217,9 +218,8 @@ typedef struct sTCB {
 typedef struct sULWOS2_queue {
     uint8_t head;                           // Queue head
     uint8_t tail;                           // Queue tail
-    uint8_t queueSize;                      // Maximum number of elements in queue
     uint8_t queueUsed;                      // Number of elements currently queued
-    //struct sULWOS2_queue * nextQueue;       // Pointer to the next queue (or NULL if none)
+    uint8_t queueSize;                      // Maximum number of elements in queue
 } tULWOS2_queueCTRL;
 
 extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
@@ -229,8 +229,8 @@ extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
     extern "C" {void ULWOS2_setThreadTimerMs(uint16_t interval);}
     extern "C" {void ULWOS2_sendSignal(tULWOS2threadSignal signal);}
     extern "C" {void ULWOS2_waitForSignal(tULWOS2threadSignal signal);}
-    extern "C" {void ULWOS2_updateEnqueue(tULWOS2_queue * queue);}
-    extern "C" {void ULWOS2_updateDequeue(tULWOS2_queue * queue);}
+    extern "C" {void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue);}
+    extern "C" {void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue);}
     extern "C" {void ULWOS2_killThread(void);}
     extern "C" {void ULWOS2_init();}
     extern "C" {tULWOS2threadControlBlock * ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);}
