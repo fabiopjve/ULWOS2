@@ -26,46 +26,95 @@ embeddedsystems.io
     #define _TCB_INIT {NULL,NULL,NULL,0,0,THREAD_NOT_READY,0}
 #endif
 /*
- * ULWOS2_THREAD_START() - this is the initial constructor for any thread. It is responsible for
+ * ULWOS2_THREAD_START() 
+ * This is the initial constructor for any thread. It is responsible for
  * changing code flow upon resuming a thread
  */
 #define ULWOS2_THREAD_START()   _ULWOS2_THREAD_START()
 
 /*
- * ULWOS2_THREAD_YIELD() - causes the thread to yield control back to the scheduler. It doesn't
- * change thread state, so if there are other threads ready to run with a priority higher or
- * equal to the current level (of this thread), they are gonna have a chance to run
+ * ULWOS2_THREAD_YIELD() 
+ * Causes the thread to yield control back to the scheduler. It doesn't change thread state,
+ * so if there are other threads ready to run with a priority higher or equal to the current
+ * level (of this thread), they are gonna have a chance to run
  */
 #define ULWOS2_THREAD_YIELD()   _ULWOS2_THREAD_YIELD()
 
 /*
- * ULWOS2_THREAD_SLEEP_MS(interval) - causes the thread to suspend for the given time interval in
- * milliseconds (up to 65535). Running this command yields control back to the scheduler.
+ * ULWOS2_THREAD_SLEEP_MS(interval) 
+ * Causes the thread to suspend for the given time interval in milliseconds (up to 65535). 
+ * Running this command yields control back to the scheduler.
  */
 #define ULWOS2_THREAD_SLEEP_MS(interval) _ULWOS2_THREAD_SLEEP_MS(interval)
 
 /*
- * ULWOS2_DEFINE_SIGNAL(signal) - define a single signal
+ * ULWOS2_DEFINE_SIGNAL(signal) 
+ * Define a new signal
  */
 #define ULWOS2_DEFINE_SIGNAL(signal)  _ULWOS2_DEFINE_SIGNAL(signal)
 
 /*
- * ULWOS2_THREAD_SEND_SIGNAL(signal) - sends a signal. This is a synchronization command. All threads
- * that are waiting for the given signal will resume their operation (according to their priority)
+ * ULWOS2_THREAD_SEND_SIGNAL(signal) 
+ * Send a signal. This is a synchronization command. All threads that are waiting for the
+ * given signal will resume their operation (according to their priority)
  */
 #define ULWOS2_THREAD_SEND_SIGNAL(signal) _ULWOS2_THREAD_SEND_SIGNAL(signal)
 
 /*
- * ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal) - suspends the thread and waits for the given signal. The 
- * thread is gonna wait until the signal is received. Note that the signal is sent before running
- * this command, it will not be detected by this thread
+ * ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal) 
+ * Suspend the thread and wait for the given signal. The thread is gonna wait until the signal
+ * is received. Note that if the signal is sent before running this command, it will not 
+ * be detected by this thread!
  */
 #define ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal) _ULWOS2_THREAD_WAIT_FOR_SIGNAL(signal)
 
+/*
+ * ULWOS2_CREATE_QUEUE(id,type,size) 
+ * Create a new queue using "id" as identifier. The queue created by this call is going to 
+ * have "size" elements of type "type"
+ * Example: in order to create a 16-level deep queue of chars named MY_QUEUE use
+ * ULWOS2_CREATE_QUEUE(MY_QUEUE, char, 16)
+ * Note: queues created this way are only accessible within the same module (file). In
+ * order to have a globally accessible queue, define it in a separate header and include
+ * that header in all modules that are going to access it
+ */
 #define ULWOS2_CREATE_QUEUE(id,type,size)  _ULWOS2_CREATE_QUEUE(id,type,size)
+
+/*
+ * ULWOS2_ENQUEUE(id,data)
+ * Enqueue data into the specified queue "id". This command does not block the thread and
+ * can be used from outside thread code.
+ * Returns:
+ *  true - data was successfully queued
+ *  false - data was not queued (queue is full)
+ */
 #define ULWOS2_ENQUEUE(id,data) _ULWOS2_ENQUEUE(id,data)
+
+/*
+ * ULWOS2_TRY_ENQUEUE(id,data)
+ * Tries to enqueue data into the specified queue "id". This command will block the thread
+ * if the queue is full (waiting until it has space available) and can only be used inside 
+ * a thread.
+ */
 #define ULWOS2_TRY_ENQUEUE(id,data) _ULWOS2_TRY_ENQUEUE(id,data)  
+
+/*
+ * ULWOS2_DEQUEUE(id, data)
+ * Dequeue data from the specified queue "id". This command does not block the thread and
+ * can be used from outside thread code.
+ * Note that this is a macro and it directly changes the contents of "data" variable. You
+ * don't need to pass a pointer to the variable.
+ * Returns:
+ *  true - data was successfully dequeued
+ *  false - data was not dequeued (queue is empty)
+ */
 #define ULWOS2_DEQUEUE(id, data)    _ULWOS2_DEQUEUE(id, data)
+
+/*
+ * ULWOS2_TRY_DEQUEUE(id,data)
+ * Tries to dequeue data from the specified queue "id". This command will block the thread
+ * if the queue is empty (waiting until data is available) and can only be used inside a thread.
+ */
 #define ULWOS2_TRY_DEQUEUE(id, data) _ULWOS2_TRY_DEQUEUE(id, data) 
 
 /*

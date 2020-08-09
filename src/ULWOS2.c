@@ -14,9 +14,6 @@ embeddedsystems.io
 tULWOS2threadControlBlock *ULWOS2_tempPointer;
 static tULWOS2threadControlBlock *currentTCB, *head;
 static uint8_t invalidateThreadPriorityQueue;
-#ifdef ULWOS2_SIGNALS
-    static void * queuePointer;
-#endif
 
 // Internal function prototypes
 static void ULWOS2_orderPriority(void);
@@ -26,6 +23,7 @@ static void ULWOS2_checkTimers(void);
  * ULWOS2_setThreadTimerMs
  * Set the thread timer to the desired interval in ms (up to 65535ms) and set thread state to sleeping.
  * The thread will resume operation once the time interval has elapsed
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
  */
 void ULWOS2_setThreadTimerMs(uint16_t interval)
 {
@@ -41,6 +39,8 @@ void ULWOS2_setThreadTimerMs(uint16_t interval)
  * ULWOS2_waitForSignal
  * Force the thread into sleep waiting for the specified signal
  * The thread will resume operation once the signal arrives
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_THREAD_WAIT_FOR_SIGNAL INSTEAD)
  */
 #ifdef ULWOS2_SIGNALS
 void ULWOS2_waitForSignal(tULWOS2threadSignal signal)
@@ -56,6 +56,8 @@ void ULWOS2_waitForSignal(tULWOS2threadSignal signal)
 /*
  * ULWOS2_sendSignal
  * Send the specified signal, this will resume all threads that are waiting for it
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_THREAD_SEND_SIGNAL INSTEAD)
  */
 #ifdef ULWOS2_SIGNALS
 void ULWOS2_sendSignal(tULWOS2threadSignal signal)
@@ -73,6 +75,11 @@ void ULWOS2_sendSignal(tULWOS2threadSignal signal)
 #endif
 
 #ifdef ULWOS2_SIGNALS
+/*
+ * ULWOS2_updateEnqueue
+ * Updated queue's head and used counter
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ */
 void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue)
 {
     queue->head++;
@@ -82,6 +89,11 @@ void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue)
 #endif
 
 #ifdef ULWOS2_SIGNALS
+/*
+ * ULWOS2_updateDequeue
+ * Updated queue's tail and used counter
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ */
 void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue)
 {
     queue->tail++;
@@ -93,6 +105,8 @@ void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue)
 /*
  * ULWOS2_killThread
  * Kill the thread, it won't run anymore
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_THREAD_KILL INSTEAD)
  */
 void ULWOS2_killThread(void)
 {
@@ -106,11 +120,12 @@ void ULWOS2_killThread(void)
 /*
  * ULWOS2_init
  * Initialize all threads and ULWOS2 states
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_INIT INSTEAD)
  */
 void ULWOS2_init()
 {
     currentTCB = NULL;
-    queuePointer = NULL;
 }
 
 /*
@@ -119,6 +134,8 @@ void ULWOS2_init()
  *  thread - the function to run
  *  priority - the desired priority for this thread (0 is the highest)
  * Returns: tULWOS2threadControlBlock *, a pointer to this thread's TCB
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_THREAD_CREATE INSTEAD)
  */
 tULWOS2threadControlBlock * ULWOS2_createThread(void(*thread)(), tULWOS2threadPriority priority)
 {
@@ -196,6 +213,8 @@ static void ULWOS2_orderPriority(void)
 /*
  * ULWOS2_startScheduler
  * Starts ULWOS2 scheduler, this function does not return!
+ * THIS IS AN INTERNAL FUNCTION, DO NOT USE IT IN YOUR APPLICATION CODE !!!
+ * (USE ULWOS2_START_SCHEDULER INSTEAD)
  */
 void __attribute__ ((naked)) ULWOS2_startScheduler()
 {
