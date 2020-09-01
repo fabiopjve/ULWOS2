@@ -22,6 +22,13 @@
     tULWOS2Timer ULWOS2_getMilliseconds(void)
     {
         return millis();
+    }
+#elif ULWOS2_TARGET == ULWOS2_TARGET_GD32V
+    #include "gd32vf103.h"
+    uint32_t ULWOS2_getMilliseconds(void)
+    {
+        uint64_t ticks = get_timer_value();
+        return (ticks / (SystemCoreClock / 4000));
     }    
 #else
 
