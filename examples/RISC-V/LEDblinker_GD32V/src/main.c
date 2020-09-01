@@ -1,13 +1,9 @@
 /*
-    CDC example on GD32VF103 on Longan Nano using PlatformIO and modified
-    CDC ACM library
-
-    This very basic example will echo all received characters back to the
-    host computer.
+    LED blinker with ULWOS2 on GD32V
 
     Author: Fábio Pereira
     www.embeddedsystems.io
-    Date: August, 29th, 2020
+    Date: August, 30th, 2020
 */
 
 #include "gd32v_pjt_include.h"
