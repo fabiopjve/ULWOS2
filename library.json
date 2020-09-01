@@ -1,0 +1,20 @@
+{
+    "name": "ULWOS2",
+    "version": "1.1.1",
+    "keywords": "Thread Scheduler, Multitasking",
+    "description": "ULWOS2 is a cooperative thread scheduler 100% written in C which can run on any platform supported by GCC. You can use it to run multiple threads at the same time in a cooperative fashion",
+    "authors":
+    {
+      "name":  "Fábio Pereira",
+      "url":   "https://www.embeddedsystems.io",
+      "maintainer": true
+    },
+    "repository":
+    {
+      "type": "git",
+      "url": "https://github.com/fabiopjve/ULWOS2"
+    },    
+    "frameworks": "*",
+    "platforms": "*",
+    "examples": "examples/*"
+}
