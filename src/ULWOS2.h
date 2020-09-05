@@ -226,15 +226,17 @@ extern tULWOS2threadControlBlock *ULWOS2_tempPointer;
 
 #ifdef __cplusplus
     // This is needed for Arduino
-    extern "C" {void ULWOS2_setThreadTimerMs(uint16_t interval);}
-    extern "C" {void ULWOS2_sendSignal(tULWOS2threadSignal signal);}
-    extern "C" {void ULWOS2_waitForSignal(tULWOS2threadSignal signal);}
-    extern "C" {void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue);}
-    extern "C" {void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue);}
-    extern "C" {void ULWOS2_killThread(void);}
-    extern "C" {void ULWOS2_init();}
-    extern "C" {tULWOS2threadControlBlock * ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);}
-    extern "C" {void ULWOS2_startScheduler() __attribute__ ((noreturn));}
+    extern "C" {
+        void ULWOS2_setThreadTimerMs(uint16_t interval);
+        void ULWOS2_sendSignal(tULWOS2threadSignal signal);
+        void ULWOS2_waitForSignal(tULWOS2threadSignal signal);
+        void ULWOS2_updateEnqueue(tULWOS2_queueCTRL * queue);
+        void ULWOS2_updateDequeue(tULWOS2_queueCTRL * queue);
+        void ULWOS2_killThread(void);
+        void ULWOS2_init();
+        tULWOS2threadControlBlock * ULWOS2_createThread(void(*thisFunction)(), tULWOS2threadPriority thisPriority);
+        void ULWOS2_startScheduler() __attribute__ ((noreturn));
+    }
 #else
     // Standard C building environmet
     void ULWOS2_setThreadTimerMs(uint16_t interval);
