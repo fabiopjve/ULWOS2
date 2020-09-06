@@ -92,7 +92,7 @@ void CDC_thread(void)
         if (rxLength) {
             cdc_sendData(buf, rxLength);
             // if we receive a single character, send it to terminal thread, otherwise print the string
-            if (rxLength) {
+            if (rxLength == 1) {
                 newCharacter = buf[0];
                 ULWOS2_THREAD_SEND_SIGNAL(SIGNAL_NEW_CHARACTER);
             } else LCD_ShowString(0, 32, (char*)buf, CL_RED);
