@@ -11,14 +11,14 @@
 
 void thread1(void)
 {
-	ULWOS2_THREAD_START();
-	while(1)
-	{
-		LEDR(0); // toggle red LED
-		ULWOS2_THREAD_SLEEP_MS(50);
-        LEDR(1);
+    ULWOS2_THREAD_START();
+    while(1)
+    {
+        LEDR(0);    // red LED on
+        ULWOS2_THREAD_SLEEP_MS(50);
+        LEDR(1);    // red LED off
         ULWOS2_THREAD_SLEEP_MS(500);
-	}
+    }
 }
 
 void longanNanoInit(void)
@@ -36,7 +36,7 @@ void longanNanoInit(void)
 void main(void)
 {
     longanNanoInit();
-	ULWOS2_INIT();
-	ULWOS2_THREAD_CREATE(thread1, 10);
-	ULWOS2_START_SCHEDULER();	
+    ULWOS2_INIT();
+    ULWOS2_THREAD_CREATE(thread1, 10);
+    ULWOS2_START_SCHEDULER();	
 }
