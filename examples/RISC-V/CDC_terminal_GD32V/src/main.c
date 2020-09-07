@@ -15,25 +15,32 @@
 #include "gd32v_pjt_include.h"
 #include "ULWOS2.h"
 
+/*
+    Print a message on CDC device every 10 seconds
+*/
 void printEveryTenSeconds_thread(void)
 {
-	ULWOS2_THREAD_START();
-	while(1)
-	{
+    ULWOS2_THREAD_START();
+    while(1)
+    {
         cdc_print("Periodic ULWOS2 thread, 10 seconds!\n");
         ULWOS2_THREAD_SLEEP_MS(10000);
         LEDG_TOG;   // toggle green LED
-	}
+    }
 }
 
+/*
+    Process characters received on CDC device and prints them on the LCD
+*/
 void CDC_thread(void)
 {
-	ULWOS2_THREAD_START();
+    ULWOS2_THREAD_START();
     // wait here until USB CDC is configured
     while (!cdc_isConfigured()) ULWOS2_THREAD_SLEEP_MS(1);
+    // create printing thread
     ULWOS2_THREAD_CREATE(printEveryTenSeconds_thread, 10);
-	while(1)
-	{
+    while(1)
+    {
         cdc_process();
         uint8_t buf[64];
         uint32_t rxLength = cdc_getReceivedData(buf, 64);
@@ -43,7 +50,7 @@ void CDC_thread(void)
         }
         // sleep for 1ms so that other threads can run
         ULWOS2_THREAD_SLEEP_MS(1);
-	}
+    }
 }
 
 void longanNanoInit(void)
@@ -62,7 +69,7 @@ void longanNanoInit(void)
 int main(void)
 {
     longanNanoInit();
-	ULWOS2_INIT();
-	ULWOS2_THREAD_CREATE(CDC_thread, 1);
-	ULWOS2_START_SCHEDULER();	
+    ULWOS2_INIT();
+    ULWOS2_THREAD_CREATE(CDC_thread, 1);
+    ULWOS2_START_SCHEDULER();	
 }
