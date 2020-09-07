@@ -17,15 +17,15 @@ void longanNanoInit(void)
     rcu_periph_clock_enable(RCU_GPIOC);
     gpio_init(GPIOC, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_13);
     gpio_init(GPIOA, GPIO_MODE_OUT_PP, GPIO_OSPEED_50MHZ, GPIO_PIN_1|GPIO_PIN_2);
-    LEDR(1);
-    LEDG(1);
-    LEDB(1);    
+    LEDR(1);    // red LED off
+    LEDG(1);    // green LED off
+    LEDB(1);    // blue LED off  
 }
 
 void main(void)
 {
     longanNanoInit();
-	ULWOS2_INIT();
+    ULWOS2_INIT();
     createLEDthreads();
-	ULWOS2_START_SCHEDULER();	
+    ULWOS2_START_SCHEDULER();	
 }
