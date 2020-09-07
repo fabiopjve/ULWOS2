@@ -23,8 +23,8 @@ void printEveryTenSeconds_thread(void)
     ULWOS2_THREAD_START();
     while(1)
     {
-        cdc_print("Periodic ULWOS2 thread, 10 seconds!\n");
         ULWOS2_THREAD_SLEEP_MS(10000);
+        cdc_print("Periodic ULWOS2 thread, 10 seconds!\n");
         LEDG_TOG;   // toggle green LED
     }
 }
