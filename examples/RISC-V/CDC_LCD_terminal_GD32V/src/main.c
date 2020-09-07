@@ -22,12 +22,12 @@
 
 ULWOS2_DEFINE_SIGNAL(SIGNAL_NEW_CHARACTER);
 
-char newCharacter;
+static char newCharacter;
 static uint8_t px, py;
-uint16_t currentColor = CL_WHITE;
+static uint16_t currentColor = CL_WHITE;
 
 /*
-    Prints a message on CDC device every 10 seconds
+    Print a message on CDC device every 10 seconds
 */
 void printEveryTenSeconds_thread(void)
 {
@@ -41,7 +41,7 @@ void printEveryTenSeconds_thread(void)
 }
 
 /*
-    Processes characters received on CDC device and prints them on the LCD
+    Process characters received on CDC device and prints them on the LCD
 */
 void terminal_thread(void)
 {
@@ -57,7 +57,7 @@ void terminal_thread(void)
         } else if (newCharacter == '\b') {
             // this is a backspace
             if (px >= 8) {
-                px -= 8;
+                px -= 8;    
                 LCD_ShowChar(px, py, ' ', 0, currentColor);
             }
         } else if (newCharacter == '\r') {
@@ -78,14 +78,14 @@ void terminal_thread(void)
 */
 void CDC_thread(void)
 {
-	ULWOS2_THREAD_START();
+    ULWOS2_THREAD_START();
     // wait here until USB CDC is configured
     while (!cdc_isConfigured()) ULWOS2_THREAD_SLEEP_MS(1);
     // create printing and terminal threads
     ULWOS2_THREAD_CREATE(printEveryTenSeconds_thread, 10);
     ULWOS2_THREAD_CREATE(terminal_thread, 5);
-	while(1)
-	{
+    while(1)
+    {
         cdc_process();
         uint8_t buf[64];
         uint32_t rxLength = cdc_getReceivedData(buf, 64);
@@ -100,7 +100,7 @@ void CDC_thread(void)
         }
         // sleep for 1ms so that other threads can run
         ULWOS2_THREAD_SLEEP_MS(1);
-	}
+    }
 }
 
 void longanNanoInit(void)
@@ -124,7 +124,7 @@ void longanNanoInit(void)
 int main(void)
 {
     longanNanoInit();
-	ULWOS2_INIT();
-	ULWOS2_THREAD_CREATE(CDC_thread, 5);
-	ULWOS2_START_SCHEDULER();	
+    ULWOS2_INIT();
+    ULWOS2_THREAD_CREATE(CDC_thread, 5);
+    ULWOS2_START_SCHEDULER();	
 }
